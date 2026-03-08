@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import CourseHeader from '../components/CourseHeader'
+import DistributionSketch from '../components/DistributionSketch'
 import KeyIdea from '../components/KeyIdea'
 import MathBlock from '../components/MathBlock'
 import SortVisualization from '../components/SortVisualization'
@@ -13,20 +14,6 @@ const contextNotes = [
 ]
 
 const sortedScores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
-
-function MetricCompareBar({ label, value, accent, widthClass }) {
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</span>
-        <span className={`text-sm font-bold ${accent}`}>{value}</span>
-      </div>
-      <div className="h-3 rounded-full bg-slate-200 dark:bg-slate-800">
-        <div className={`h-3 rounded-full ${widthClass}`} />
-      </div>
-    </div>
-  )
-}
 
 function Practice1_Screen4({ setContextNotes }) {
   useEffect(() => {
@@ -93,28 +80,7 @@ function Practice1_Screen4({ setContextNotes }) {
             Визуально разницу между этими метриками на реальных данных со скошенным распределением
             можно представить так:
           </p>
-
-          <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5 shadow-soft dark:border-slate-700 dark:from-slate-900 dark:to-slate-950">
-            <div className="space-y-4">
-              <MetricCompareBar
-                label="Медиана"
-                value="79"
-                accent="text-emerald-700 dark:text-emerald-300"
-                widthClass="w-[36%] bg-emerald-500"
-              />
-              <MetricCompareBar
-                label="Среднее арифметическое"
-                value="169.5"
-                accent="text-rose-700 dark:text-rose-300"
-                widthClass="w-[78%] bg-rose-500"
-              />
-            </div>
-
-            <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              У распределения длинный правый хвост из-за выброса 1000. Среднее уезжает вправо вслед
-              за хвостом, а медиана остается в центре основной массы наблюдений.
-            </p>
-          </div>
+          <DistributionSketch />
         </div>
 
         <KeyIdea title="Что такое робастность?">
