@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { ShieldCheck } from 'lucide-react'
 import CourseHeader from '../components/CourseHeader'
+import KeyIdea from '../components/KeyIdea'
 import MathBlock from '../components/MathBlock'
 
 const scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
@@ -20,53 +20,33 @@ function DataPill({ value, isAnomaly = false }) {
   )
 }
 
-function KeyIdea({ title, children }) {
-  return (
-    <aside className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5 shadow-soft dark:border-emerald-900 dark:bg-emerald-950/30">
-      <div className="flex items-start gap-3 border-l-4 border-emerald-500 pl-3 dark:border-emerald-400">
-        <ShieldCheck
-          size={20}
-          className="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-300"
-          aria-hidden="true"
-        />
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-emerald-700 dark:text-emerald-300">
-            {title}
-          </h3>
-          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">{children}</p>
-        </div>
-      </div>
-    </aside>
-  )
-}
-
 function Practice1_Screen3({ setContext, setContextNotes }) {
   const sections = useMemo(
     () => [
       {
         id: 'intro',
         title: 'Сюжет задачи',
-        note: 'Один баг в базе дал студенту 1000 баллов, и теперь нужно понять, какая метрика центра адекватна для группы.',
+        note: 'Один сбой в данных записал студенту 1000 баллов. Нужно понять, почему классическое среднее здесь перестает описывать группу.',
       },
       {
         id: 'data-array',
         title: 'Данные',
-        note: 'В отсортированном ряду видно, что 1000 резко выбивается из диапазона остальных оценок (65-88).',
+        note: 'Видно, что девять оценок лежат в диапазоне 65-88, а одно значение резко выбивается вправо.',
       },
       {
-        id: 'mean-attempt',
+        id: 'mean-formula',
         title: 'Среднее арифметическое',
-        note: 'Mean = 169.5, что выше максимума теста. Метрика сломалась из-за чувствительности к выбросу.',
+        note: 'Среднее учитывает величину каждого наблюдения. Поэтому один большой выброс линейно сдвигает итог.',
       },
       {
-        id: 'median-attempt',
-        title: 'Медиана',
-        note: 'Median = 79 остается в реалистичном диапазоне и лучше описывает типичного студента.',
+        id: 'sensitivity',
+        title: 'Чувствительность к выбросу',
+        note: 'Если заменить одно значение на огромное число, среднее сразу растет. Это и есть проблема неустойчивости.',
       },
       {
         id: 'key-idea',
-        title: 'Важность для ML',
-        note: 'Модели, минимизирующие суммарную ошибку, могут чрезмерно подстроиться под выброс и ухудшить качество на большинстве нормальных наблюдений.',
+        title: 'Постановка следующего шага',
+        note: 'Нужна метрика центра, которая меньше зависит от экстремальных значений. На следующем экране это будет медиана.',
       },
     ],
     [],
@@ -106,64 +86,74 @@ function Practice1_Screen3({ setContext, setContextNotes }) {
   return (
     <article className="space-y-6">
       <CourseHeader
-        badge="Практика 1 -> Базовые понятия"
+        badge="Практика 1 -> БАЗОВЫЕ ПОНЯТИЯ"
         title="Мини-пример: оценки 10 студентов"
-        subtitle="Как один выброс ломает классическую статистику."
+        subtitle="Почему одно ошибочное значение ломает среднее арифметическое."
       />
 
       <section className="content-block space-y-6">
         <p id="intro" className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
-          Представим типичную задачу: мы спарсили данные об оценках 10 студентов за онлайн-тест.
-          Девять человек написали тест нормально (максимум — 100 баллов). Но у десятого произошел
-          баг в базе данных, и система записала ему 1000 баллов.
+          Представим типичную аналитическую ситуацию: у нас есть оценки 10 студентов за тест. Девять
+          человек написали его нормально, но в одной записи произошел баг, и вместо реального балла
+          в таблице оказалось число 1000. Формально это все еще числовой столбец, но содержательно
+          данные уже испорчены.
         </p>
 
         <div id="data-array" className="space-y-3">
           <p className="font-semibold text-slate-900 dark:text-white">
-            Вот как выглядит наш отсортированный массив данных:
+            Отсортированный набор данных выглядит так:
           </p>
           <div className="flex flex-wrap gap-3">
             {scores.map((score) => (
               <DataPill key={score} value={score} isAnomaly={score === 1000} />
             ))}
           </div>
-        </div>
-
-        <div id="mean-attempt" className="space-y-4">
-          <h3 className="section-title">Попытка №1. Среднее арифметическое (Mean)</h3>
-          <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
-            Если мы «в лоб» применим классическую формулу, мы просто сложим все значения и поделим
-            на количество студентов (10).
-          </p>
-          <MathBlock formula="\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i = \frac{1695}{10} = 169.5" />
-          <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
-            <strong>Результат: 169.5 баллов.</strong> Это математический абсурд. Средний балл
-            оказался выше максимально возможного (100). Одно единственное аномальное значение
-            «перетянуло» среднее на себя, сделав метрику абсолютно бесполезной для описания этой
-            группы.
+          <p className="max-w-3xl text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            Уже на глаз видно, что одно значение живет по другим правилам. Основная масса оценок
+            лежит около 70-80, а 1000 создает длинный правый хвост.
           </p>
         </div>
 
-        <div id="median-attempt" className="space-y-4">
-          <h3 className="section-title">Попытка №2. Медиана (Median)</h3>
+        <div id="mean-formula" className="space-y-4">
+          <h3 className="section-title">Попытка №1. Среднее арифметическое</h3>
           <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
-            Теперь попробуем найти медиану. Это число, которое стоит ровно посередине
-            отсортированного ряда. Так как у нас 10 элементов, мы берем среднее двух центральных:
+            Среднее арифметическое складывает все наблюдения и делит сумму на их количество. Оно
+            использует именно <strong>значения</strong> элементов, а не только их порядок.
           </p>
-          <MathBlock formula="Me = \frac{x_{(5)} + x_{(6)}}{2} = \frac{78 + 80}{2} = 79" />
+          <MathBlock formula="\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i = \frac{1695}{10} = 169.5" />
           <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
-            <strong>Результат: 79 баллов.</strong> Вот это уже похоже на правду! Это число отлично
-            описывает успеваемость типичного студента из нашей группы, полностью проигнорировав баг
-            системы.
+            <strong>Результат: 169.5 баллов.</strong> Это абсурдный ответ: средний балл оказался
+            выше максимума теста. Значит, формула посчитана верно, но сама метрика в этой ситуации
+            перестала описывать реальность.
+          </p>
+        </div>
+
+        <div id="sensitivity" className="space-y-4">
+          <h3 className="section-title">Почему среднее так легко ломается</h3>
+          <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
+            У среднего есть линейная чувствительность к каждому элементу. Если обозначить ошибочное
+            значение через <code className="rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">M</code>,
+            то получим:
+          </p>
+          <MathBlock formula="\bar{x}(M) = \frac{695 + M}{10}" />
+          <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
+            Эта запись важна: как только <code className="rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">M</code>{' '}
+            растет, среднее растет вместе с ним. Если бы вместо 1000 стояло 88, то мы получили бы
+            вполне нормальное среднее:
+          </p>
+          <MathBlock formula="\bar{x}_{\text{без бага}} = \frac{695 + 88}{10} = 78.3" />
+          <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
+            Один неверный элемент сдвинул центр выборки с 78.3 до 169.5. Именно поэтому среднее
+            арифметическое называют чувствительным к выбросам.
           </p>
         </div>
 
         <div id="key-idea">
-          <KeyIdea title="Свойство робастности">
-          Среднее арифметическое <strong>чувствительно к выбросам</strong>. Медиана —{' '}
-          <strong>робастна (устойчива)</strong>. Если в ваших данных много аномалий или
-          распределение сильно скошено (как зарплаты в компании), использование среднего
-          арифметического приведет к неверным выводам.
+          <KeyIdea title="Проблема сформулирована">
+            Среднее арифметическое хорошо работает, когда данные чистые и без экстремальных
+            аномалий. Но если даже одна строка содержит сильный выброс, центр выборки может
+            исказиться. Значит, на следующем шаге нам нужна метрика, которая опирается не на
+            величину значения, а на положение элемента в упорядоченном ряду.
           </KeyIdea>
         </div>
       </section>

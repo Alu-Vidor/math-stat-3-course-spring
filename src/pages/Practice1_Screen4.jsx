@@ -62,6 +62,8 @@ function Practice1_Screen4({ setContextNotes }) {
             Алгоритм прост: сортируем по возрастанию и берем элемент прямо по центру.
           </p>
 
+          <MathBlock formula="Me = \begin{cases} x_{(\frac{n+1}{2})}, & n \text{ нечетно} \\[4pt] \frac{x_{(n/2)} + x_{(n/2+1)}}{2}, & n \text{ четно} \end{cases}" />
+
           <SortVisualization
             values={sortedScores}
             highlighted={[4, 5]}
@@ -76,6 +78,12 @@ function Practice1_Screen4({ setContextNotes }) {
             конце <code className="rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">100</code>{' '}
             или <code className="rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">1000000</code>.
             Она игнорирует экстремальные значения, фокусируясь только на центре.
+          </p>
+
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            Важно, что медиана использует <strong>порядковые статистики</strong>
+            : нам важны пятое и шестое места в отсортированном ряду, а не точная величина самого
+            большого элемента. Пока выброс остается справа от центра, на медиану он не влияет.
           </p>
         </div>
 
