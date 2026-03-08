@@ -5,6 +5,7 @@ import MathBlock from '../components/MathBlock'
 import Practice1 from './Practice1'
 import Practice1_Screen1 from './Practice1_Screen1'
 import Practice1_Screen2 from './Practice1_Screen2'
+import Practice1_Screen3 from './Practice1_Screen3'
 
 const pageContent = {
   2: {
@@ -143,6 +144,10 @@ function PracticePage({ practiceNumber, screenNumber, setContext, setContextNote
 
   if (practiceNumber === 1 && screenNumber === 2) {
     return <Practice1_Screen2 setContextNotes={setContextNotes} />
+  }
+
+  if (practiceNumber === 1 && screenNumber === 3) {
+    return <Practice1_Screen3 setContextNotes={setContextNotes} />
   }
 
   if (practiceNumber === 1) {
