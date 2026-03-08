@@ -61,7 +61,13 @@ const scaleCards = [
 
 function Practice1_Screen2({ setContextNotes }) {
   useEffect(() => {
-    setContextNotes(contextNotes)
+    const timerId = window.setTimeout(() => {
+      setContextNotes(contextNotes)
+    }, 0)
+
+    return () => {
+      window.clearTimeout(timerId)
+    }
   }, [setContextNotes])
 
   return (
