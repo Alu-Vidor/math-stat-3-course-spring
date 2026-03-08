@@ -1,15 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ShieldCheck } from 'lucide-react'
 import CourseHeader from '../components/CourseHeader'
 import MathBlock from '../components/MathBlock'
-
-const contextNotes = [
-  {
-    title: 'Важность для ML',
-    text: 'Почему мы так боимся выбросов? Алгоритмы машинного обучения (например, линейная регрессия) минимизируют суммарную ошибку. Одно такое гигантское значение заставит алгоритм сильно сместить веса, чтобы подстроиться под него. Итог: модель будет давать плохие предсказания для 90% нормальных данных ради одной аномалии.',
-  },
-]
 
 const scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
 
@@ -47,10 +40,68 @@ function KeyIdea({ title, children }) {
   )
 }
 
-function Practice1_Screen3({ setContextNotes }) {
+function Practice1_Screen3({ setContext, setContextNotes }) {
+  const sections = useMemo(
+    () => [
+      {
+        id: 'intro',
+        title: 'Сюжет задачи',
+        note: 'Один баг в базе дал студенту 1000 баллов, и теперь нужно понять, какая метрика центра адекватна для группы.',
+      },
+      {
+        id: 'data-array',
+        title: 'Данные',
+        note: 'В отсортированном ряду видно, что 1000 резко выбивается из диапазона остальных оценок (65-88).',
+      },
+      {
+        id: 'mean-attempt',
+        title: 'Среднее арифметическое',
+        note: 'Mean = 169.5, что выше максимума теста. Метрика сломалась из-за чувствительности к выбросу.',
+      },
+      {
+        id: 'median-attempt',
+        title: 'Медиана',
+        note: 'Median = 79 остается в реалистичном диапазоне и лучше описывает типичного студента.',
+      },
+      {
+        id: 'key-idea',
+        title: 'Важность для ML',
+        note: 'Модели, минимизирующие суммарную ошибку, могут чрезмерно подстроиться под выброс и ухудшить качество на большинстве нормальных наблюдений.',
+      },
+    ],
+    [],
+  )
+
   useEffect(() => {
-    setContextNotes(contextNotes)
-  }, [setContextNotes])
+    setContextNotes([])
+    setContext({ title: sections[0].title, text: sections[0].note })
+  }, [sections, setContext, setContextNotes])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries.find((entry) => entry.isIntersecting)
+        if (!visibleEntry) {
+          return
+        }
+
+        const currentSection = sections.find((section) => section.id === visibleEntry.target.id)
+        if (currentSection) {
+          setContext({ title: currentSection.title, text: currentSection.note })
+        }
+      },
+      { rootMargin: '-35% 0px -55% 0px', threshold: 0.1 },
+    )
+
+    sections.forEach((section) => {
+      const node = document.getElementById(section.id)
+      if (node) {
+        observer.observe(node)
+      }
+    })
+
+    return () => observer.disconnect()
+  }, [sections, setContext])
 
   return (
     <article className="space-y-6">
@@ -61,13 +112,13 @@ function Practice1_Screen3({ setContextNotes }) {
       />
 
       <section className="content-block space-y-6">
-        <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
+        <p id="intro" className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
           Представим типичную задачу: мы спарсили данные об оценках 10 студентов за онлайн-тест.
           Девять человек написали тест нормально (максимум — 100 баллов). Но у десятого произошел
           баг в базе данных, и система записала ему 1000 баллов.
         </p>
 
-        <div className="space-y-3">
+        <div id="data-array" className="space-y-3">
           <p className="font-semibold text-slate-900 dark:text-white">
             Вот как выглядит наш отсортированный массив данных:
           </p>
@@ -78,7 +129,7 @@ function Practice1_Screen3({ setContextNotes }) {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div id="mean-attempt" className="space-y-4">
           <h3 className="section-title">Попытка №1. Среднее арифметическое (Mean)</h3>
           <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
             Если мы «в лоб» применим классическую формулу, мы просто сложим все значения и поделим
@@ -93,7 +144,7 @@ function Practice1_Screen3({ setContextNotes }) {
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div id="median-attempt" className="space-y-4">
           <h3 className="section-title">Попытка №2. Медиана (Median)</h3>
           <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
             Теперь попробуем найти медиану. Это число, которое стоит ровно посередине
@@ -107,12 +158,14 @@ function Practice1_Screen3({ setContextNotes }) {
           </p>
         </div>
 
-        <KeyIdea title="Свойство робастности">
+        <div id="key-idea">
+          <KeyIdea title="Свойство робастности">
           Среднее арифметическое <strong>чувствительно к выбросам</strong>. Медиана —{' '}
           <strong>робастна (устойчива)</strong>. Если в ваших данных много аномалий или
           распределение сильно скошено (как зарплаты в компании), использование среднего
           арифметического приведет к неверным выводам.
-        </KeyIdea>
+          </KeyIdea>
+        </div>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -147,7 +147,7 @@ function PracticePage({ practiceNumber, screenNumber, setContext, setContextNote
   }
 
   if (practiceNumber === 1 && screenNumber === 3) {
-    return <Practice1_Screen3 setContextNotes={setContextNotes} />
+    return <Practice1_Screen3 setContext={setContext} setContextNotes={setContextNotes} />
   }
 
   if (practiceNumber === 1) {
