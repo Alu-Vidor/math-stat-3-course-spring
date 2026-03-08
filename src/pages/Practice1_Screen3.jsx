@@ -177,10 +177,10 @@ function Practice1_Screen3({ setContext, setContextNotes }) {
         </Link>
 
         <Link
-          to="/practice/1/screen/4"
+          to="/practice/1/screen/5"
           className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Далее: 4. Данные в коде (Pandas)
+          Далее: 5. Данные в коде (Pandas)
         </Link>
       </nav>
     </article>
