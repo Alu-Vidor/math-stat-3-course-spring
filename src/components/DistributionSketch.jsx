@@ -9,19 +9,31 @@ import {
   YAxis,
 } from 'recharts'
 
-const distributionData = [
-  { x: 40, density: 0.02 },
-  { x: 50, density: 0.08 },
-  { x: 60, density: 0.18 },
-  { x: 70, density: 0.34 },
-  { x: 78, density: 0.48 },
-  { x: 85, density: 0.44 },
-  { x: 95, density: 0.28 },
-  { x: 110, density: 0.16 },
-  { x: 130, density: 0.08 },
-  { x: 160, density: 0.035 },
-  { x: 200, density: 0.012 },
-]
+const sample = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
+const mean = sample.reduce((sum, value) => sum + value, 0) / sample.length
+const median = (sample[4] + sample[5]) / 2
+const bandwidth = 35
+const densityScale = 18
+
+function gaussianKernel(u) {
+  return Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI)
+}
+
+function estimateDensity(x) {
+  const density =
+    sample.reduce((sum, value) => sum + gaussianKernel((x - value) / bandwidth), 0) /
+    (sample.length * bandwidth)
+
+  return density * densityScale
+}
+
+const distributionData = Array.from({ length: 81 }, (_, index) => {
+  const x = index * 12.5
+  return {
+    x: Number(x.toFixed(1)),
+    density: Number(estimateDensity(x).toFixed(4)),
+  }
+})
 
 function DistributionSketch() {
   return (
@@ -36,10 +48,11 @@ function DistributionSketch() {
             <XAxis
               dataKey="x"
               type="number"
-              domain={[40, 200]}
+              domain={[0, 1000]}
               tick={{ fill: '#475569', fontSize: 12 }}
               tickLine={false}
               axisLine={{ stroke: '#64748b' }}
+              ticks={[0, 100, 200, 400, 600, 800, 1000]}
               label={{
                 value: 'Значение признака',
                 position: 'insideBottom',
@@ -53,6 +66,7 @@ function DistributionSketch() {
               tickLine={false}
               axisLine={{ stroke: '#64748b' }}
               width={36}
+              domain={[0, 'auto']}
               label={{
                 value: 'Плотность',
                 angle: -90,
@@ -79,19 +93,13 @@ function DistributionSketch() {
               fillOpacity={0.6}
             />
             <ReferenceLine
-              x={78}
-              stroke="#0f172a"
-              strokeDasharray="6 6"
-              label={{ value: 'Mode', position: 'top', fill: '#0f172a', fontSize: 12 }}
-            />
-            <ReferenceLine
-              x={79}
+              x={median}
               stroke="#059669"
               strokeDasharray="6 6"
               label={{ value: 'Median', position: 'top', fill: '#059669', fontSize: 12 }}
             />
             <ReferenceLine
-              x={169.5}
+              x={mean}
               stroke="#e11d48"
               strokeDasharray="6 6"
               label={{ value: 'Mean', position: 'top', fill: '#e11d48', fontSize: 12 }}
@@ -101,9 +109,9 @@ function DistributionSketch() {
       </div>
 
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-        У распределения длинный правый хвост. Поэтому среднее уходит вправо заметно сильнее, чем
-        медиана. Это и есть визуальная причина, почему при выбросах `mean` и `median` начинают
-        расходиться.
+        Этот график построен по той же учебной выборке: `65, 70, 72, 75, 78, 80, 82, 85, 88,
+        1000`. Девять наблюдений образуют плотный кластер слева, а одно экстремальное значение
+        тянет среднее далеко вправо. Поэтому `mean = 169.5`, а `median = 79`.
       </p>
     </div>
   )
