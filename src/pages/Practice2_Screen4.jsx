@@ -148,9 +148,15 @@ function Practice2_Screen4({ setContextNotes }) {
               Решение в три строки
             </h3>
             <ol className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              <li><strong>1.</strong> Явно запишите $H_0$.</li>
-              <li><strong>2.</strong> Вычислите статистику критерия и соответствующее $p$-value.</li>
-              <li><strong>3.</strong> Сравните <MathText text="$p$-value с $\\alpha$" /> и сделайте вывод только про $H_0$.</li>
+              <li>
+                <MathText text="1. Явно запишите $H_0$." />
+              </li>
+              <li>
+                <MathText text="2. Вычислите статистику критерия и соответствующее $p$-value." />
+              </li>
+              <li>
+                <MathText text="3. Сравните $p$-value с $\\alpha$ и сделайте вывод только про $H_0$." />
+              </li>
             </ol>
           </article>
         </section>

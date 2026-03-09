@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import MathText from './MathText'
 
 const steps = [
   {
@@ -25,7 +26,11 @@ function HypothesisFlow() {
         <div key={step.title} className="contents">
           <article className={`rounded-[1.5rem] border p-5 shadow-soft ${step.tone}`}>
             <h4 className="text-base font-semibold text-slate-900 dark:text-white">{step.title}</h4>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">{step.text}</p>
+            <MathText
+              as="p"
+              text={step.text}
+              className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
           </article>
 
           {index < steps.length - 1 ? (

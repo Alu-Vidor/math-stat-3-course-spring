@@ -141,7 +141,7 @@ function Practice2_Screen2({ setContextNotes }) {
             text="Почти любой тест можно мыслить как вычисление статистики $T(X)$ и сравнение ее с ожидаемым поведением при условии, что $H_0$ верна."
             className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-200"
           />
-          <MathBlock formula={String.raw`T(X)=\frac{\text{оценка из выборки}-\text{значение по }H_0}{\text{стандартная ошибка}`} />
+          <MathBlock formula={String.raw`T(X)=\frac{\text{оценка из выборки}-\text{значение по }H_0}{\text{стандартная ошибка}}`} />
           <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
             Чем больше по модулю статистика, тем труднее объяснить данные случайным шумом.
           </p>

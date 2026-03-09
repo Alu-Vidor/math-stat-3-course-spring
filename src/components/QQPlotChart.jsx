@@ -41,11 +41,45 @@ const skewedData = [
   { theoretical: 2.4, sample: 5.2 },
 ]
 
+const heavyTailsData = [
+  { theoretical: -2.4, sample: -4.15 },
+  { theoretical: -1.9, sample: -3.05 },
+  { theoretical: -1.5, sample: -2.2 },
+  { theoretical: -1.1, sample: -1.5 },
+  { theoretical: -0.7, sample: -0.9 },
+  { theoretical: -0.3, sample: -0.36 },
+  { theoretical: 0, sample: 0 },
+  { theoretical: 0.3, sample: 0.35 },
+  { theoretical: 0.7, sample: 0.92 },
+  { theoretical: 1.1, sample: 1.55 },
+  { theoretical: 1.5, sample: 2.32 },
+  { theoretical: 1.9, sample: 3.2 },
+  { theoretical: 2.4, sample: 4.3 },
+]
+
 function QQPlotChart({ variant = 'normal' }) {
-  const isNormal = variant === 'normal'
-  const data = isNormal ? nearNormalData : skewedData
-  const pointColor = isNormal ? '#2563eb' : '#ea580c'
-  const lineColor = isNormal ? '#dc2626' : '#a855f7'
+  const chartMap = {
+    normal: {
+      data: nearNormalData,
+      pointColor: '#2563eb',
+      lineColor: '#dc2626',
+      yDomain: [-2.6, 2.6],
+    },
+    skewed: {
+      data: skewedData,
+      pointColor: '#ea580c',
+      lineColor: '#a855f7',
+      yDomain: [-1.5, 5.5],
+    },
+    'heavy-tails': {
+      data: heavyTailsData,
+      pointColor: '#0f766e',
+      lineColor: '#be123c',
+      yDomain: [-4.6, 4.6],
+    },
+  }
+
+  const chart = chartMap[variant] ?? chartMap.normal
 
   return (
     <div className="h-72">
@@ -64,7 +98,7 @@ function QQPlotChart({ variant = 'normal' }) {
           <YAxis
             type="number"
             dataKey="sample"
-            domain={isNormal ? [-2.6, 2.6] : [-1.5, 5.5]}
+            domain={chart.yDomain}
             tickLine={false}
             axisLine={{ stroke: '#64748b' }}
             tick={{ fill: '#475569', fontSize: 12 }}
@@ -79,11 +113,11 @@ function QQPlotChart({ variant = 'normal' }) {
           />
           <ReferenceLine
             segment={[{ x: -2.5, y: -2.5 }, { x: 2.5, y: 2.5 }]}
-            stroke={lineColor}
+            stroke={chart.lineColor}
             strokeWidth={2}
             strokeDasharray="6 6"
           />
-          <Scatter data={data} fill={pointColor} />
+          <Scatter data={chart.data} fill={chart.pointColor} />
         </ScatterChart>
       </ResponsiveContainer>
     </div>
