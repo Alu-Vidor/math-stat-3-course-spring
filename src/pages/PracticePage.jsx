@@ -14,6 +14,10 @@ import Practice1_Screen8 from './Practice1_Screen8'
 import Practice1_Screen9 from './Practice1_Screen9'
 import Practice1_Screen10 from './Practice1_Screen10'
 import Practice1_Screen11 from './Practice1_Screen11'
+import Practice2_Screen1 from './Practice2_Screen1'
+import Practice2_Screen2 from './Practice2_Screen2'
+import Practice2_Screen3 from './Practice2_Screen3'
+import Practice2_Screen4 from './Practice2_Screen4'
 
 const pageContent = {
   2: {
@@ -192,6 +196,22 @@ function PracticePage({ practiceNumber, screenNumber, setContext, setContextNote
 
   if (practiceNumber === 1) {
     return <Practice1 setContext={setContext} />
+  }
+
+  if (practiceNumber === 2 && (screenNumber === undefined || screenNumber === 1)) {
+    return <Practice2_Screen1 setContextNotes={setContextNotes} />
+  }
+
+  if (practiceNumber === 2 && screenNumber === 2) {
+    return <Practice2_Screen2 setContextNotes={setContextNotes} />
+  }
+
+  if (practiceNumber === 2 && screenNumber === 3) {
+    return <Practice2_Screen3 setContextNotes={setContextNotes} />
+  }
+
+  if (practiceNumber === 2 && screenNumber === 4) {
+    return <Practice2_Screen4 setContextNotes={setContextNotes} />
   }
 
   return <GenericPractice id={practiceNumber} setContext={setContext} />
