@@ -1,9 +1,20 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  ComposedChart,
+  ReferenceArea,
+  ReferenceLine,
+  ResponsiveContainer,
+  Scatter,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import CodeBlock from '../components/CodeBlock'
 import CourseHeader from '../components/CourseHeader'
 import KeyIdea from '../components/KeyIdea'
 import MathBlock from '../components/MathBlock'
+import PlotViewer from '../components/PlotViewer'
 import TerminalOutput from '../components/TerminalOutput'
 
 const ciCode = `import numpy as np
@@ -37,7 +48,25 @@ const contextNotes = [
   },
 ]
 
+const sampleMean = 175.7
+const sampleSem = 1.658
+const tCriticalByConfidence = {
+  90: 1.833,
+  91: 1.895,
+  92: 1.973,
+  93: 2.067,
+  94: 2.185,
+  95: 2.262,
+  96: 2.398,
+  97: 2.581,
+  98: 2.821,
+  99: 3.25,
+}
+const chartData = [{ x: sampleMean, y: 0.5 }]
+
 function Practice1_Screen7({ setContextNotes }) {
+  const [confidenceLevel, setConfidenceLevel] = useState(95)
+
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       setContextNotes(contextNotes)
@@ -47,6 +76,16 @@ function Practice1_Screen7({ setContextNotes }) {
       window.clearTimeout(timerId)
     }
   }, [setContextNotes])
+
+  const interval = useMemo(() => {
+    const tCritical = tCriticalByConfidence[confidenceLevel]
+    const margin = tCritical * sampleSem
+    return {
+      lower: Number((sampleMean - margin).toFixed(2)),
+      upper: Number((sampleMean + margin).toFixed(2)),
+      margin: Number(margin.toFixed(2)),
+    }
+  }, [confidenceLevel])
 
   return (
     <article className="space-y-6">
@@ -152,8 +191,123 @@ function Practice1_Screen7({ setContextNotes }) {
           </div>
         </div>
 
+        <div className="space-y-4">
+          <h3 className="section-title">4. Как меняется интервал при разном уровне доверия</h3>
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            Ниже один и тот же выборочный средний рост. Меняется только уровень доверия. Чем выше
+            требование к надежности вывода, тем шире становится интервал.
+          </p>
+
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-800/40">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <label
+                  htmlFor="confidence-level"
+                  className="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                >
+                  Уровень доверия: <span className="text-indigo-600 dark:text-indigo-300">{confidenceLevel}%</span>
+                </label>
+                <div className="text-sm text-slate-600 dark:text-slate-300">
+                  Интервал: [{interval.lower}; {interval.upper}]
+                </div>
+              </div>
+
+              <input
+                id="confidence-level"
+                type="range"
+                min="90"
+                max="99"
+                step="1"
+                value={confidenceLevel}
+                onChange={(event) => setConfidenceLevel(Number(event.target.value))}
+                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-indigo-600 dark:bg-slate-700"
+              />
+
+              <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+                <span>90%</span>
+                <span>95%</span>
+                <span>99%</span>
+              </div>
+            </div>
+          </div>
+
+          <PlotViewer
+            title="Интервал вокруг выборочного среднего"
+            caption="Синяя вертикальная линия показывает выборочное среднее x̄ = 175.7. Закрашенная зона показывает доверительный интервал для среднего при выбранном уровне доверия."
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 24, right: 24, left: 12, bottom: 12 }}>
+                <XAxis
+                  type="number"
+                  dataKey="x"
+                  domain={[168, 184]}
+                  tickCount={9}
+                  tick={{ fill: '#475569', fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#94a3b8' }}
+                  label={{
+                    value: 'Средний рост, см',
+                    position: 'insideBottom',
+                    offset: -6,
+                    fill: '#475569',
+                    fontSize: 12,
+                  }}
+                />
+                <YAxis type="number" domain={[0, 1]} hide />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: '0.9rem',
+                    border: '1px solid #cbd5e1',
+                    backgroundColor: '#ffffff',
+                  }}
+                  formatter={(value, name) => {
+                    if (name === 'mean') {
+                      return [`${value} см`, 'Выборочное среднее']
+                    }
+                    return [value, name]
+                  }}
+                  labelFormatter={() => `Уровень доверия: ${confidenceLevel}%`}
+                />
+                <ReferenceArea x1={interval.lower} x2={interval.upper} y1={0.2} y2={0.8} fill="#93c5fd" fillOpacity={0.45} />
+                <ReferenceLine
+                  x={sampleMean}
+                  stroke="#2563eb"
+                  strokeWidth={3}
+                  label={{ value: 'x̄', position: 'top', fill: '#1d4ed8', fontSize: 12 }}
+                />
+                <ReferenceLine x={interval.lower} stroke="#64748b" strokeDasharray="5 5" />
+                <ReferenceLine x={interval.upper} stroke="#64748b" strokeDasharray="5 5" />
+                <Scatter dataKey="x" fill="#1d4ed8" name="mean" shape="circle" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </PlotViewer>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900/50">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                Выборочное среднее
+              </p>
+              <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">{sampleMean} см</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900/50">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                Полуширина интервала
+              </p>
+              <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">{interval.margin} см</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900/50">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                Текущий доверительный интервал
+              </p>
+              <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
+                [{interval.lower}; {interval.upper}]
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 dark:border-slate-700 dark:bg-slate-900/50">
-          <h3 className="section-title">4. Когда такой интервал корректен?</h3>
+          <h3 className="section-title">5. Когда такой интервал корректен?</h3>
           <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
             Доверительный интервал для среднего имеет смысл только тогда, когда выборка получена
             достаточно честно: наблюдения независимы, сама выборка не систематически смещена, а
