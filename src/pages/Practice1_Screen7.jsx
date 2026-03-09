@@ -1,0 +1,193 @@
+import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import CodeBlock from '../components/CodeBlock'
+import CourseHeader from '../components/CourseHeader'
+import KeyIdea from '../components/KeyIdea'
+import MathBlock from '../components/MathBlock'
+import TerminalOutput from '../components/TerminalOutput'
+
+const ciCode = `import numpy as np
+import scipy.stats as st
+
+# Наши данные (рост студентов в см)
+data = np.array([175, 180, 168, 172, 185, 178, 170, 182, 176, 171])
+
+# Строим 95% доверительный интервал для среднего (распределение Стьюдента)
+conf_interval = st.t.interval(
+    confidence=0.95,
+    df=len(data) - 1,
+    loc=np.mean(data),
+    scale=st.sem(data),
+)
+
+print(f"Доверительный интервал (95%): {conf_interval}")`
+
+const contextNotes = [
+  {
+    title: 't-распределение vs Z-распределение',
+    text: 'В коде мы использовали `st.t.interval`, а не нормальное распределение. Причина в том, что истинная дисперсия генеральной совокупности нам неизвестна и оценивается по той же маленькой выборке. Для малых выборок распределение Стьюдента даёт более широкие и более осторожные интервалы.',
+  },
+  {
+    title: 'Уровень доверия',
+    text: 'Чем выше уровень доверия, тем шире получается интервал. Интервал на 99% надёжнее, чем на 95%, но он менее точный. Интервал со 100% уверенностью можно сделать почти бесконечно широким, и он потеряет практический смысл.',
+  },
+  {
+    title: 'Предпосылки метода',
+    text: 'Классический доверительный интервал для среднего опирается на случайность выборки и предполагает, что наблюдения независимы. Для маленьких выборок дополнительно важно, чтобы распределение в генеральной совокупности не было слишком далеко от нормального.',
+  },
+]
+
+function Practice1_Screen7({ setContextNotes }) {
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      setContextNotes(contextNotes)
+    }, 0)
+
+    return () => {
+      window.clearTimeout(timerId)
+    }
+  }, [setContextNotes])
+
+  return (
+    <article className="space-y-6">
+      <CourseHeader
+        badge="Практика 1 -> ДАННЫЕ В КОДЕ"
+        title="Точечные и интервальные оценки"
+        subtitle="Почему одного числа всегда недостаточно."
+      />
+
+      <section className="content-block space-y-6">
+        <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
+          До сих пор мы считали точечные оценки (Point Estimates) — среднее, медиану, дисперсию.
+          Точечная оценка дает нам ровно одно число. Но у нас есть только <em>выборка</em>, а вывод
+          мы хотим сделать о всей <em>генеральной совокупности</em>.
+        </p>
+
+        <div className="space-y-3">
+          <h3 className="section-title">1. Проблема точечной оценки</h3>
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            Если мы измерим рост 100 случайных студентов и получим среднее 175 см, это не значит,
+            что средний рост <em>всех</em> студентов университета ровно 175 см. Если мы возьмем
+            другие 100 человек, среднее окажется 174.2 см или 176.1 см. Точечная оценка почти
+            наверняка ошибается, потому что она не показывает масштаб неопределенности.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="section-title">2. Интервальная оценка</h3>
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            Вместо одного числа мы строим диапазон, который с заданным уровнем доверия накрывает
+            истинное значение генерального параметра.
+          </p>
+          <MathBlock formula="\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}" />
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-800/40">
+            <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Эта формула состоит из трех частей:
+            </p>
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+              <li>
+                1. <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">x̄</code>{' '}
+                — наша точечная оценка, то есть среднее по выборке.
+              </li>
+              <li>
+                2. <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">zα/2</code>{' '}
+                — квантиль распределения, который задаёт уровень доверия, например 95%.
+              </li>
+              <li>
+                3. <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">σ / √n</code>{' '}
+                — стандартная ошибка среднего: чем больше выборка, тем точнее оценка и тем уже
+                интервал.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <section className="rounded-2xl border border-indigo-200 bg-indigo-50/70 p-5 dark:border-indigo-900 dark:bg-indigo-950/20">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-indigo-800 dark:text-indigo-300">
+              Формула, которая ближе к коду
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              В реальной задаче дисперсия почти всегда неизвестна, поэтому на практике чаще
+              используют не z-интервал, а t-интервал:
+            </p>
+            <MathBlock formula="\bar{x} \pm t_{\alpha/2,\;n-1}\frac{s}{\sqrt{n}}" />
+            <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+              Здесь <em>s</em> — выборочное стандартное отклонение, а число степеней свободы равно{' '}
+              <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">n - 1</code>.
+            </p>
+          </section>
+
+          <section className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 dark:border-amber-900 dark:bg-amber-950/20">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-amber-800 dark:text-amber-300">
+              Что означает ширина интервала
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Ширина доверительного интервала определяется величиной статистической ошибки.
+              Интервал расширяется, если:
+            </p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+              <li>данные сильно разбросаны;</li>
+              <li>объём выборки мал;</li>
+              <li>мы требуем более высокий уровень доверия.</li>
+            </ul>
+          </section>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="section-title">3. Считаем в коде</h3>
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            В Python не нужно считать доверительный интервал руками. Библиотека{' '}
+            <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">
+              scipy.stats
+            </code>{' '}
+            строит его одной командой.
+          </p>
+          <CodeBlock code={ciCode} language="python" title="Python" />
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Вывод в терминале
+            </p>
+            <TerminalOutput lines="Доверительный интервал (95%): (171.68, 179.71)" />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 dark:border-slate-700 dark:bg-slate-900/50">
+          <h3 className="section-title">4. Когда такой интервал корректен?</h3>
+          <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            Доверительный интервал для среднего имеет смысл только тогда, когда выборка получена
+            достаточно честно: наблюдения независимы, сама выборка не систематически смещена, а
+            используемая модель разумна для данных. Иначе интервал может выглядеть строго, но
+            статистически вводить в заблуждение.
+          </p>
+        </div>
+
+        <KeyIdea title="Как правильно читать результат?">
+          Фраза "доверительный интервал 95%" не означает, что с вероятностью 95% истинное среднее
+          попадет именно в интервал от 171.68 до 179.71. Истинное среднее фиксировано: оно либо
+          внутри, либо нет. Корректная интерпретация такая: если много раз повторять выборку и
+          строить такие интервалы, то примерно 95% из них накроют истинное среднее генеральной
+          совокупности.
+        </KeyIdea>
+      </section>
+
+      <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Link
+          to="/practice/1/screen/6"
+          className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          Назад
+        </Link>
+
+        <Link
+          to="/practice/1/screen/8"
+          className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Далее: 8. Чек-лист: Лабораторная работа
+        </Link>
+      </nav>
+    </article>
+  )
+}
+
+export default Practice1_Screen7

@@ -79,6 +79,20 @@ const contextNotes = [
     title: 'Matplotlib vs Seaborn',
     text: 'Под капотом seaborn использует базовую библиотеку matplotlib. Но Seaborn специально создан для статистической визуализации: он сам считает агрегации, красивее выглядит "из коробки" и отлично работает напрямую с DataFrame из Pandas.',
   },
+  {
+    title: 'Как читать форму',
+    text: 'Если на гистограмме видно несколько локальных пиков, это может означать смесь разных подгрупп в данных. Если ECDF долго идет почти горизонтально, в этом диапазоне мало наблюдений; если резко подскакивает вверх, там значения скапливаются особенно плотно.',
+  },
+  {
+    title: 'Связь с теорией',
+    text: (
+      <>
+        <p>ECDF является естественной оценкой истинной функции распределения <em>F(x)</em>.</p>
+        <MathBlock formula="\sup_x |\hat F_n(x) - F(x)| \to 0 \quad \text{при } n \to \infty" />
+        <p>То есть при росте выборки эмпирическая кривая равномерно приближается к теоретической.</p>
+      </>
+    ),
+  },
 ]
 
 function Practice1_Screen6({ setContextNotes }) {
@@ -114,6 +128,16 @@ function Practice1_Screen6({ setContextNotes }) {
             Гистограмма разбивает весь диапазон значений на равные отрезки (корзины / bins) и считает,
             сколько наблюдений попало в каждую корзину.
           </p>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-800/40">
+            <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Если гистограмму нормировать, она становится грубой оценкой плотности распределения:
+            </p>
+            <MathBlock formula="\hat f_h(x) = \frac{1}{nh} \sum_{i=1}^{n} I\!\left(x_i \in [a_j, a_j + h)\right), \quad x \in [a_j, a_j + h)" />
+            <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+              Здесь <em>h</em> — ширина корзины. Именно поэтому выбор `bins` или ширины интервала влияет не
+              только на внешний вид, но и на саму статистическую оценку формы распределения.
+            </p>
+          </div>
           <CodeBlock code={histogramCode} language="python" title="Python" />
           <PlotViewer
             title="Пример распределения зарплат"
@@ -157,6 +181,16 @@ function Practice1_Screen6({ setContextNotes }) {
             Cumulative Distribution Function) решает эту проблему. Она показывает долю наблюдений в
             выборке, которые меньше или равны заданному значению <em>x</em>.
           </p>
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 dark:border-emerald-900 dark:bg-emerald-950/20">
+            <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Формально ECDF оценивает вероятность события <em>X ≤ x</em>:
+            </p>
+            <MathBlock formula="F(x) = P(X \le x), \qquad \hat F_n(x) = \frac{1}{n}\sum_{i=1}^{n} I(X_i \le x)" />
+            <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+              В отличие от гистограммы здесь нет параметра ширины корзины, поэтому ECDF не вводит
+              дополнительного сглаживания и сохраняет все точки выборки.
+            </p>
+          </div>
           <CodeBlock code={ecdfCode} language="python" title="Python" />
           <PlotViewer
             title="Накопительная доля наблюдений"
@@ -164,17 +198,17 @@ function Practice1_Screen6({ setContextNotes }) {
           >
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={ecdfData} margin={{ top: 12, right: 18, left: 0, bottom: 12 }}>
-                <CartesianGrid strokeDasharray="4 4" stroke="#cbd5e1" vertical={false} />
+                <CartesianGrid strokeDasharray="4 4" stroke="#64748b" strokeOpacity={0.35} vertical={false} />
                 <XAxis
                   dataKey="salary"
-                  tick={{ fill: '#475569', fontSize: 12 }}
+                  tick={{ fill: '#cbd5e1', fontSize: 12 }}
                   tickLine={false}
                   axisLine={{ stroke: '#94a3b8' }}
                   label={{
                     value: 'Значение x',
                     position: 'insideBottom',
                     offset: -6,
-                    fill: '#475569',
+                    fill: '#cbd5e1',
                     fontSize: 12,
                   }}
                 />
@@ -182,7 +216,7 @@ function Practice1_Screen6({ setContextNotes }) {
                   domain={[0, 1]}
                   ticks={[0, 0.25, 0.5, 0.75, 1]}
                   tickFormatter={(value) => `${Math.round(value * 100)}%`}
-                  tick={{ fill: '#475569', fontSize: 12 }}
+                  tick={{ fill: '#cbd5e1', fontSize: 12 }}
                   tickLine={false}
                   axisLine={{ stroke: '#94a3b8' }}
                   width={42}
@@ -190,29 +224,55 @@ function Practice1_Screen6({ setContextNotes }) {
                 <Tooltip
                   contentStyle={{
                     borderRadius: '0.9rem',
-                    border: '1px solid #cbd5e1',
-                    backgroundColor: '#ffffff',
+                    border: '1px solid #475569',
+                    backgroundColor: '#0f172a',
+                    color: '#e2e8f0',
                   }}
                   formatter={(value) => [`${Math.round(value * 100)}%`, 'Доля <= x']}
                   labelFormatter={(label) => `x = ${label}`}
                 />
                 <ReferenceLine
                   y={0.5}
-                  stroke="#10b981"
+                  stroke="#34d399"
                   strokeDasharray="6 6"
-                  label={{ value: '50%', position: 'insideTopRight', fill: '#047857', fontSize: 12 }}
+                  label={{ value: '50%', position: 'insideTopRight', fill: '#6ee7b7', fontSize: 12 }}
                 />
                 <Line
                   type="stepAfter"
                   dataKey="share"
-                  stroke="#0f172a"
+                  stroke="#7dd3fc"
                   strokeWidth={3}
-                  dot={{ r: 3, fill: '#0ea5e9', strokeWidth: 0 }}
-                  activeDot={{ r: 5, fill: '#0ea5e9' }}
+                  dot={{ r: 3, fill: '#38bdf8', stroke: '#e0f2fe', strokeWidth: 1.5 }}
+                  activeDot={{ r: 5, fill: '#38bdf8', stroke: '#ffffff', strokeWidth: 2 }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </PlotViewer>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <section className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 shadow-soft dark:border-amber-900 dark:bg-amber-950/30">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-amber-800 dark:text-amber-300">
+              Как выбирать `bins`
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Слишком мало корзин сглаживает картину и прячет реальные особенности распределения. Слишком
+              много корзин делает график шумным: случайные флуктуации начинают выглядеть как «структура».
+              Поэтому гистограмму полезно перестраивать с несколькими значениями `bins`, а не верить первому
+              варианту.
+            </p>
+          </section>
+
+          <section className="rounded-2xl border border-sky-200 bg-sky-50/70 p-5 shadow-soft dark:border-sky-900 dark:bg-sky-950/30">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-sky-800 dark:text-sky-300">
+              Что видно на ECDF сразу
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Горизонтальный участок означает редкие значения в диапазоне. Резкий вертикальный скачок
+              показывает плотное скопление наблюдений. Пересечение линии уровня 50% дает медиану, а уровней
+              25% и 75% — квартили без дополнительной группировки данных.
+            </p>
+          </section>
         </div>
 
         <KeyIdea title="Что использовать?">
