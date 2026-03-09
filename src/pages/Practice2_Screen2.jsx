@@ -6,6 +6,8 @@ import MathBlock from '../components/MathBlock'
 import MathText from '../components/MathText'
 import KeyIdea from '../components/KeyIdea'
 import ComparisonGrid from '../components/ComparisonGrid'
+import PlotViewer from '../components/PlotViewer'
+import HypothesisFlow from '../components/HypothesisFlow'
 
 const contextNotes = [
   {
@@ -88,6 +90,13 @@ function Practice2_Screen2({ setContextNotes }) {
         />
 
         <ComparisonGrid left={comparisonData.left} right={comparisonData.right} />
+
+        <PlotViewer
+          title="Визуальная логика проверки гипотез"
+          caption="Сначала фиксируем статус-кво, затем задаём тип отклонения и только после этого переводим задачу в тестовую статистику."
+        >
+          <HypothesisFlow />
+        </PlotViewer>
 
         <section className="grid gap-5 lg:grid-cols-3">
           <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">

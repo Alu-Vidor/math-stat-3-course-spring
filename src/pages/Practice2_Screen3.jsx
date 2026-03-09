@@ -6,6 +6,8 @@ import MathBlock from '../components/MathBlock'
 import MathText from '../components/MathText'
 import KeyIdea from '../components/KeyIdea'
 import ConfusionMatrix from '../components/ConfusionMatrix'
+import PlotViewer from '../components/PlotViewer'
+import ErrorTradeoffChart from '../components/ErrorTradeoffChart'
 
 const contextNotes = [
   {
@@ -106,6 +108,13 @@ function Practice2_Screen3({ setContextNotes }) {
         />
 
         <ConfusionMatrix columns={matrixColumns} rows={matrixRows} cells={matrixCells} />
+
+        <PlotViewer
+          title="Как меняются α, β и мощность"
+          caption="Чем строже порог принятия решения, тем меньше α, но тем труднее поймать реальный эффект. Мощность падает, если размер выборки не растёт."
+        >
+          <ErrorTradeoffChart />
+        </PlotViewer>
 
         <section className="grid gap-5 lg:grid-cols-3">
           {tradeoffCards.map((card) => {

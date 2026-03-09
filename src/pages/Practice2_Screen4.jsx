@@ -7,6 +7,8 @@ import AlertBox from '../components/AlertBox'
 import RuleCard from '../components/RuleCard'
 import MathBlock from '../components/MathBlock'
 import MathText from '../components/MathText'
+import PlotViewer from '../components/PlotViewer'
+import PValueTailChart from '../components/PValueTailChart'
 
 const contextNotes = [
   {
@@ -90,6 +92,13 @@ function Practice2_Screen4({ setContextNotes }) {
             text="В этом курсе по умолчанию используется стандартная схема: $H_0$ означает отсутствие эффекта. Поэтому маленькое $p$-value обычно интерпретируется как аргумент против статуса-кво."
           />
         </AlertBox>
+
+        <PlotViewer
+          title="Хвост распределения и p-value"
+          caption="Оранжевая область — это вероятность получить наблюдение не менее экстремальное, если H₀ верна. Чем она меньше, тем сильнее аргумент против H₀."
+        >
+          <PValueTailChart />
+        </PlotViewer>
 
         <section className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
           <article className="rounded-[1.5rem] border border-indigo-200 bg-indigo-50/70 p-6 dark:border-indigo-900/50 dark:bg-indigo-950/20">
