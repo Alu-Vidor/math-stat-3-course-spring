@@ -1,5 +1,6 @@
 ﻿import { Database } from 'lucide-react'
 import CodeBlock from './CodeBlock'
+import MathText from './MathText'
 
 function DatasetCard({ title, text, code, codeTitle = 'Код загрузки датасета' }) {
   return (
@@ -11,8 +12,8 @@ function DatasetCard({ title, text, code, codeTitle = 'Код загрузки �
 
         <div className="min-w-0 flex-1 space-y-4">
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
-            <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">{text}</p>
+            <MathText as="h3" text={title} className="text-lg font-semibold text-slate-900 dark:text-white" />
+            <MathText as="p" text={text} className="text-base leading-relaxed text-slate-700 dark:text-slate-200" />
           </div>
 
           <div className="max-w-3xl">

@@ -1,4 +1,5 @@
-import { CheckCircle2, XCircle } from 'lucide-react'
+﻿import { CheckCircle2, XCircle } from 'lucide-react'
+import MathText from './MathText'
 
 function RuleCard({ tone = 'success', title, text, verdict }) {
   const isSuccess = tone === 'success'
@@ -15,11 +16,13 @@ function RuleCard({ tone = 'success', title, text, verdict }) {
       <div className="flex items-start gap-3">
         <Icon size={22} className={`mt-0.5 shrink-0 ${iconStyles}`} />
         <div className="space-y-3">
-          <h3 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{title}</h3>
-          <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">{text}</p>
-          <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
-            {verdict}
-          </p>
+          <MathText as="h3" text={title} className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white" />
+          <MathText as="p" text={text} className="text-base leading-relaxed text-slate-700 dark:text-slate-200" />
+          <MathText
+            as="p"
+            text={verdict}
+            className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white"
+          />
         </div>
       </div>
     </article>

@@ -1,4 +1,5 @@
-import MathBlock from './MathBlock'
+﻿import MathBlock from './MathBlock'
+import MathText from './MathText'
 
 function ComparisonCard({ tone, title, sections, formula }) {
   const toneStyles =
@@ -13,22 +14,26 @@ function ComparisonCard({ tone, title, sections, formula }) {
 
   return (
     <article className={`rounded-[1.75rem] border p-6 shadow-soft ${toneStyles}`}>
-      <h3 className={`text-xl font-semibold tracking-tight ${titleStyles}`}>{title}</h3>
+      <MathText as="h3" text={title} className={`text-xl font-semibold tracking-tight ${titleStyles}`} />
 
       <div className="mt-5 space-y-4">
         {sections.map((section) => (
           <div key={section.label} className="space-y-1.5">
-            <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-              {section.label}
-            </p>
-            <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">{section.text}</p>
+            <MathText
+              as="p"
+              text={section.label}
+              className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400"
+            />
+            <MathText as="p" text={section.text} className="text-base leading-relaxed text-slate-700 dark:text-slate-200" />
           </div>
         ))}
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-            Математически
-          </p>
+          <MathText
+            as="p"
+            text="Математически"
+            className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400"
+          />
           <MathBlock formula={formula} />
         </div>
       </div>

@@ -3,17 +3,18 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Scale, Sigma, Target } from 'lucide-react'
 import CourseHeader from '../components/CourseHeader'
 import MathBlock from '../components/MathBlock'
+import MathText from '../components/MathText'
 import KeyIdea from '../components/KeyIdea'
 import ComparisonGrid from '../components/ComparisonGrid'
 
 const contextNotes = [
   {
     title: 'Почему буква "H"?',
-    text: 'От английского Hypothesis. Индекс 0 означает «ноль эффекта» или baseline. Альтернативную гипотезу иногда обозначают как H_A вместо H_1.',
+    text: 'От английского Hypothesis. Индекс $0$ означает «ноль эффекта» или baseline. Альтернативную гипотезу иногда обозначают как $H_A$ вместо $H_1$.',
   },
   {
     title: 'Односторонние и двусторонние тесты',
-    text: 'Если нас интересует любое отличие, используем двустороннюю альтернативу: μ_new ≠ μ_old. Если важно доказать строгое улучшение, формулируем одностороннюю альтернативу: μ_new > μ_old.',
+    text: 'Если нас интересует любое отличие, используем двустороннюю альтернативу: $\\mu_{new} \\neq \\mu_{old}$. Если важно доказать строгое улучшение, формулируем одностороннюю альтернативу: $\\mu_{new} > \\mu_{old}$.',
   },
 ]
 
@@ -75,17 +76,16 @@ function Practice2_Screen2({ setContextNotes }) {
     <article className="space-y-6">
       <CourseHeader
         badge="Практика 2 -> ИНТУИЦИЯ"
-        title="Формулируем гипотезы: H_0 и H_1"
+        title="Формулируем гипотезы: $H_0$ и $H_1$"
         subtitle="Математическая презумпция невиновности."
       />
 
       <section className="content-block space-y-6">
-        <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
-          Любой статистический тест начинается с формулировки двух взаимоисключающих утверждений.
-          Мы не можем просто сказать алгоритму «найди инсайты». Мы должны задать строгую систему
-          координат: что считаем статус-кво и какое именно отклонение считаем доказательством
-          эффекта.
-        </p>
+        <MathText
+          as="p"
+          text="Любой статистический тест начинается с формулировки двух взаимоисключающих утверждений. Мы не можем просто сказать алгоритму «найди инсайты». Мы должны задать строгую систему координат: что считаем статус-кво и какое именно отклонение считаем доказательством эффекта."
+          className="text-base leading-relaxed text-slate-700 dark:text-slate-200"
+        />
 
         <ComparisonGrid left={comparisonData.left} right={comparisonData.right} />
 
@@ -105,9 +105,11 @@ function Practice2_Screen2({ setContextNotes }) {
               <Sigma size={18} />
               <h3 className="text-base font-semibold">Шаг 2. Строим статистику</h3>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              Выбираем число, которое будет измерять расхождение между данными и H_0.
-            </p>
+            <MathText
+              as="p"
+              text="Выбираем число, которое будет измерять расхождение между данными и $H_0$."
+              className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
           </article>
 
           <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
@@ -125,10 +127,11 @@ function Practice2_Screen2({ setContextNotes }) {
           <h3 className="text-lg font-semibold tracking-tight text-indigo-900 dark:text-indigo-200">
             Математический шаблон проверки
           </h3>
-          <p className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-200">
-            Почти любой тест можно мыслить как вычисление статистики <code>T(X)</code> и сравнение
-            ее с ожидаемым поведением при условии, что <code>H_0</code> верна.
-          </p>
+          <MathText
+            as="p"
+            text="Почти любой тест можно мыслить как вычисление статистики $T(X)$ и сравнение ее с ожидаемым поведением при условии, что $H_0$ верна."
+            className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-200"
+          />
           <MathBlock formula="T(X)=\frac{\text{оценка из выборки}-\text{значение по }H_0}{\text{стандартная ошибка}}" />
           <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
             Чем больше по модулю статистика, тем труднее объяснить данные случайным шумом.
@@ -155,7 +158,7 @@ function Practice2_Screen2({ setContextNotes }) {
 
         <details className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft open:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:open:bg-slate-900/90">
           <summary className="cursor-pointer text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
-            Мини-интерактив: как выбрать знак в H_1?
+            <MathText text="Мини-интерактив: как выбрать знак в $H_1$?" />
           </summary>
           <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
             <p>
@@ -163,17 +166,15 @@ function Practice2_Screen2({ setContextNotes }) {
               альтернативу. Если бизнес-цель заранее сформулирована как «увеличить» или
               «уменьшить», можно использовать односторонний тест.
             </p>
-            <p>
-              Ключевой принцип: знак в <code>H_1</code> должен быть определен <em>до</em> просмотра
-              данных, иначе тест перестает быть честным.
-            </p>
+            <MathText
+              as="p"
+              text="Ключевой принцип: знак в $H_1$ должен быть определен до просмотра данных, иначе тест перестает быть честным."
+            />
           </div>
         </details>
 
-        <KeyIdea title="Мы никогда не доказываем H_0.">
-          Статистический тест не выносит вердикт «нулевая гипотеза истинна». Он лишь проверяет,
-          хватило ли улик, чтобы ее отвергнуть. Поэтому корректная формулировка всегда звучит так:
-          либо <strong>отвергаем H_0</strong>, либо <strong>не отвергаем H_0</strong>.
+        <KeyIdea title="Мы никогда не доказываем $H_0$.">
+          {'Статистический тест не выносит вердикт «нулевая гипотеза истинна». Он лишь проверяет, хватило ли улик, чтобы ее отвергнуть. Поэтому корректная формулировка всегда звучит так: либо отвергаем $H_0$, либо не отвергаем $H_0$. '}
         </KeyIdea>
       </section>
 

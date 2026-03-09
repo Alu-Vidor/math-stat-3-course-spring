@@ -1,4 +1,5 @@
-import { AlertTriangle } from 'lucide-react'
+﻿import { AlertTriangle } from 'lucide-react'
+import MathText from './MathText'
 
 function AlertBox({ title, children }) {
   return (
@@ -6,9 +7,11 @@ function AlertBox({ title, children }) {
       <div className="flex items-start gap-3">
         <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-700 dark:text-amber-300" />
         <div className="space-y-2">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-amber-800 dark:text-amber-200">
-            {title}
-          </h3>
+          <MathText
+            as="h3"
+            text={title}
+            className="text-sm font-semibold uppercase tracking-[0.08em] text-amber-800 dark:text-amber-200"
+          />
           <div className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">{children}</div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, ShieldAlert, ShieldCheck, TrendingUp } from 'lucide-react'
 import CourseHeader from '../components/CourseHeader'
 import MathBlock from '../components/MathBlock'
+import MathText from '../components/MathText'
 import KeyIdea from '../components/KeyIdea'
 import ConfusionMatrix from '../components/ConfusionMatrix'
 
@@ -12,19 +13,19 @@ const contextNotes = [
     text: 'Цена ошибки зависит от задачи. В медицине часто критичнее ошибка II рода: пропустить болезнь опаснее, чем зря отправить на дообследование. В антиспаме наоборот — важнее не потерять полезное письмо, даже если часть спама проскочит.',
   },
   {
-    title: 'Индустриальный стандарт α',
-    text: 'Часто заранее фиксируют α = 0.05. Это означает готовность в среднем в 5% случаев ошибочно увидеть эффект там, где его нет.',
+    title: 'Индустриальный стандарт $\\alpha$',
+    text: 'Часто заранее фиксируют $\\alpha = 0.05$. Это означает готовность в среднем в $5\\%$ случаев ошибочно увидеть эффект там, где его нет.',
   },
 ]
 
 const matrixColumns = [
-  { title: 'H_0 верна', subtitle: 'Эффекта нет' },
-  { title: 'H_1 верна', subtitle: 'Эффект есть' },
+  { title: '$H_0$ верна', subtitle: 'Эффекта нет' },
+  { title: '$H_1$ верна', subtitle: 'Эффект есть' },
 ]
 
 const matrixRows = [
-  { title: 'Не отвергаем H_0', subtitle: 'Оставляем всё как есть' },
-  { title: 'Отвергаем H_0', subtitle: 'Внедряем изменения' },
+  { title: 'Не отвергаем $H_0$', subtitle: 'Оставляем всё как есть' },
+  { title: 'Отвергаем $H_0$', subtitle: 'Внедряем изменения' },
 ]
 
 const matrixCells = [
@@ -37,14 +38,14 @@ const matrixCells = [
     {
       type: 'error',
       title: 'Ошибка II рода (False Negative)',
-      text: 'Вероятность β. Реальный эффект есть, но тест его пропустил.',
+      text: 'Вероятность $\\beta$. Реальный эффект есть, но тест его пропустил.',
     },
   ],
   [
     {
       type: 'error',
       title: 'Ошибка I рода (False Positive)',
-      text: 'Уровень значимости α. Мы увидели эффект там, где его на самом деле нет.',
+      text: 'Уровень значимости $\\alpha$. Мы увидели эффект там, где его на самом деле нет.',
     },
     {
       type: 'success',
@@ -98,11 +99,11 @@ function Practice2_Screen3({ setContextNotes }) {
       />
 
       <section className="content-block space-y-6">
-        <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
-          Мы сформулировали гипотезы, собрали данные и вынесли вердикт. Но тест работает не со
-          всей генеральной совокупностью, а лишь с выборкой. Поэтому даже при корректной процедуре
-          наш вердикт может оказаться ошибочным. У статистики есть ровно два типа таких ошибок.
-        </p>
+        <MathText
+          as="p"
+          text="Мы сформулировали гипотезы, собрали данные и вынесли вердикт. Но тест работает не со всей генеральной совокупностью, а лишь с выборкой. Поэтому даже при корректной процедуре наш вердикт может оказаться ошибочным. У статистики есть ровно два типа таких ошибок."
+          className="text-base leading-relaxed text-slate-700 dark:text-slate-200"
+        />
 
         <ConfusionMatrix columns={matrixColumns} rows={matrixRows} cells={matrixCells} />
 
@@ -133,18 +134,18 @@ function Practice2_Screen3({ setContextNotes }) {
             Если сделать правило слишком строгим, чтобы почти никогда не получать ложных тревог,
             тест начнет часто пропускать реальные эффекты. Это и есть фундаментальный компромисс.
           </p>
-          <MathBlock formula="\alpha \downarrow \Rightarrow \beta \uparrow, \qquad \alpha \uparrow \Rightarrow \beta \downarrow" />
+          <MathBlock formula="\\alpha \\downarrow \\Rightarrow \\beta \\uparrow, \\qquad \\alpha \\uparrow \\Rightarrow \\beta \\downarrow" />
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
             <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/80">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">Низкий α</p>
+              <MathText as="p" text="Низкий $\\alpha$" className="text-sm font-semibold text-slate-900 dark:text-white" />
               <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">Меньше ложных срабатываний, но больше пропущенных эффектов.</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/80">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">Высокий α</p>
+              <MathText as="p" text="Высокий $\\alpha$" className="text-sm font-semibold text-slate-900 dark:text-white" />
               <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">Легче объявить эффект, но возрастает риск ошибочного внедрения.</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/80">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">Большое n</p>
+              <MathText as="p" text="Большое $n$" className="text-sm font-semibold text-slate-900 dark:text-white" />
               <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">Единственный способ одновременно уменьшить обе ошибки и поднять мощность.</p>
             </div>
           </div>
@@ -166,10 +167,8 @@ function Practice2_Screen3({ setContextNotes }) {
           </div>
         </details>
 
-        <KeyIdea title="Баланс α и β">
-          Ошибки I и II рода связаны как качели. Настраивая строгость теста, вы почти всегда
-          перераспределяете риск между ними. Единственный способ реально улучшить обе стороны сразу
-          — <strong>увеличить размер выборки</strong> и тем самым сузить шум выборочных оценок.
+        <KeyIdea title="Баланс $\\alpha$ и $\\beta$">
+          {'Ошибки I и II рода связаны как качели. Настраивая строгость теста, вы почти всегда перераспределяете риск между ними. Единственный способ реально улучшить обе стороны сразу — увеличить размер выборки и тем самым сузить шум выборочных оценок.'}
         </KeyIdea>
       </section>
 

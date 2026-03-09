@@ -1,4 +1,5 @@
 ﻿import { ListChecks } from 'lucide-react'
+import MathText from './MathText'
 
 function renderContent(content) {
   if (Array.isArray(content)) {
@@ -7,14 +8,14 @@ function renderContent(content) {
         {content.map((item) => (
           <li key={item} className="flex items-start gap-2 text-slate-700 dark:text-slate-200">
             <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
-            <span>{item}</span>
+            <MathText text={item} />
           </li>
         ))}
       </ul>
     )
   }
 
-  return <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">{content}</p>
+  return <MathText as="p" text={content} className="text-base leading-relaxed text-slate-700 dark:text-slate-200" />
 }
 
 function TaskBlock({ title, items }) {
@@ -24,7 +25,7 @@ function TaskBlock({ title, items }) {
         <div className="rounded-2xl bg-violet-100 p-3 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300">
           <ListChecks size={20} />
         </div>
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
+        <MathText as="h3" text={title} className="text-lg font-semibold text-slate-900 dark:text-white" />
       </div>
 
       <ol className="space-y-4">
@@ -39,7 +40,7 @@ function TaskBlock({ title, items }) {
               </div>
 
               <div className="min-w-0 flex-1 space-y-3">
-                <h4 className="text-base font-semibold text-slate-900 dark:text-white">{item.title}</h4>
+                <MathText as="h4" text={item.title} className="text-base font-semibold text-slate-900 dark:text-white" />
                 {renderContent(item.content)}
               </div>
             </div>
