@@ -17,21 +17,15 @@ function getInitialTheme() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-function Layout({ practices, currentPracticeId, children }) {
+function LayoutContent({ practices, currentPracticeId, children }) {
   const [context, setContext] = useState(defaultContext)
   const [contextNotes, setContextNotes] = useState([])
   const [theme, setTheme] = useState(getInitialTheme)
-  const location = useLocation()
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
     localStorage.setItem('theme', theme)
   }, [theme])
-
-  useEffect(() => {
-    setContext(defaultContext)
-    setContextNotes([])
-  }, [location.pathname])
 
   const shellApi = useMemo(
     () => ({
@@ -84,6 +78,20 @@ function Layout({ practices, currentPracticeId, children }) {
         </div>
       </div>
     </div>
+  )
+}
+
+function Layout({ practices, currentPracticeId, children }) {
+  const location = useLocation()
+
+  return (
+    <LayoutContent
+      key={location.pathname}
+      practices={practices}
+      currentPracticeId={currentPracticeId}
+    >
+      {children}
+    </LayoutContent>
   )
 }
 

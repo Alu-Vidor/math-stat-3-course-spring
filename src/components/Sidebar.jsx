@@ -1,13 +1,9 @@
-﻿import { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { NavLink } from 'react-router-dom'
 
 function Sidebar({ practices, currentPracticeId }) {
   const [openPracticeId, setOpenPracticeId] = useState(currentPracticeId || 'practice-1')
-
-  useEffect(() => {
-    setOpenPracticeId(currentPracticeId || 'practice-1')
-  }, [currentPracticeId])
 
   return (
     <nav className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-700 dark:bg-slate-900">

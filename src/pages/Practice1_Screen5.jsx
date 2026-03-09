@@ -264,7 +264,7 @@ function Practice1_Screen5({ setContextNotes }) {
           to="/practice/1/screen/6"
           className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Далее: 6. Визуализация: Гистограммы
+          Далее: 6. Гистограмма и эмпирическая функция
         </Link>
       </nav>
     </article>

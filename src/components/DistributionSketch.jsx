@@ -9,31 +9,30 @@ import {
   YAxis,
 } from 'recharts'
 
-const sample = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
-const mean = sample.reduce((sum, value) => sum + value, 0) / sample.length
-const median = (sample[4] + sample[5]) / 2
-const bandwidth = 35
-const densityScale = 18
+const modeX = 32
+const medianX = 45
+const meanX = 60
 
-function gaussianKernel(u) {
-  return Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI)
-}
-
-function estimateDensity(x) {
-  const density =
-    sample.reduce((sum, value) => sum + gaussianKernel((x - value) / bandwidth), 0) /
-    (sample.length * bandwidth)
-
-  return density * densityScale
-}
-
-const distributionData = Array.from({ length: 81 }, (_, index) => {
-  const x = index * 12.5
-  return {
-    x: Number(x.toFixed(1)),
-    density: Number(estimateDensity(x).toFixed(4)),
+function logNormalLike(x, mu = 3.75, sigma = 0.42) {
+  if (x <= 0) {
+    return 0
   }
+
+  const exponent = -((Math.log(x) - mu) ** 2) / (2 * sigma * sigma)
+  return Math.exp(exponent) / (x * sigma)
+}
+
+const rawDistribution = Array.from({ length: 120 }, (_, index) => {
+  const x = 1 + index
+  return { x, density: logNormalLike(x) }
 })
+
+const maxDensity = Math.max(...rawDistribution.map((point) => point.density))
+
+const distributionData = rawDistribution.map((point) => ({
+  x: point.x,
+  density: Number((point.density / maxDensity).toFixed(4)),
+}))
 
 function DistributionSketch() {
   return (
@@ -48,13 +47,13 @@ function DistributionSketch() {
             <XAxis
               dataKey="x"
               type="number"
-              domain={[0, 1000]}
+              domain={[0, 100]}
               tick={{ fill: '#475569', fontSize: 12 }}
               tickLine={false}
               axisLine={{ stroke: '#64748b' }}
-              ticks={[0, 100, 200, 400, 600, 800, 1000]}
+              ticks={[0, 20, 40, 60, 80, 100]}
               label={{
-                value: 'Значение признака',
+                value: 'Ось значений',
                 position: 'insideBottom',
                 offset: -6,
                 fill: '#475569',
@@ -93,13 +92,19 @@ function DistributionSketch() {
               fillOpacity={0.6}
             />
             <ReferenceLine
-              x={median}
+              x={modeX}
+              stroke="#0f172a"
+              strokeDasharray="6 6"
+              label={{ value: 'Mode', position: 'top', fill: '#0f172a', fontSize: 12 }}
+            />
+            <ReferenceLine
+              x={medianX}
               stroke="#059669"
               strokeDasharray="6 6"
               label={{ value: 'Median', position: 'top', fill: '#059669', fontSize: 12 }}
             />
             <ReferenceLine
-              x={mean}
+              x={meanX}
               stroke="#e11d48"
               strokeDasharray="6 6"
               label={{ value: 'Mean', position: 'top', fill: '#e11d48', fontSize: 12 }}
@@ -109,9 +114,13 @@ function DistributionSketch() {
       </div>
 
       <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-        Этот график построен по той же учебной выборке: `65, 70, 72, 75, 78, 80, 82, 85, 88,
-        1000`. Девять наблюдений образуют плотный кластер слева, а одно экстремальное значение
-        тянет среднее далеко вправо. Поэтому `mean = 169.5`, а `median = 79`.
+        Это схематичное правосторонне-скошенное распределение. У него длинный хвост справа, поэтому
+        типичное соотношение такое:
+        <code className="mx-1 rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">
+          mode &lt; median &lt; mean
+        </code>
+        . Именно эту идею и нужно вынести из графика: среднее сильнее всех тянется в сторону
+        хвоста.
       </p>
     </div>
   )

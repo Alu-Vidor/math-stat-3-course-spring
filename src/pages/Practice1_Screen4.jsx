@@ -77,7 +77,7 @@ function Practice1_Screen4({ setContextNotes }) {
         <div className="space-y-4">
           <h3 className="section-title">Визуализация: График</h3>
           <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-            Визуально разницу между этими метриками на реальных данных со скошенным распределением
+            Схематично разницу между этими метриками для правосторонне-скошенного распределения
             можно представить так:
           </p>
           <DistributionSketch />
