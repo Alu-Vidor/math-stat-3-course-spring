@@ -2,10 +2,20 @@
 import katex from 'katex'
 
 function InlineMath({ formula, block = false }) {
-  const rendered = katex.renderToString(formula, {
-    throwOnError: false,
-    displayMode: block,
-  })
+  let rendered
+
+  try {
+    rendered = katex.renderToString(formula, {
+      throwOnError: true,
+      displayMode: block,
+    })
+  } catch (error) {
+    console.error(`KaTeX render failed for formula: ${formula}`, error)
+    rendered = katex.renderToString(formula, {
+      throwOnError: false,
+      displayMode: block,
+    })
+  }
 
   const Tag = block ? 'div' : 'span'
 

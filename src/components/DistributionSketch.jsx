@@ -9,10 +9,6 @@ import {
   YAxis,
 } from 'recharts'
 
-const modeX = 32
-const medianX = 45
-const meanX = 60
-
 function logNormalLike(x, mu = 3.75, sigma = 0.42) {
   if (x <= 0) {
     return 0
@@ -33,6 +29,14 @@ const distributionData = rawDistribution.map((point) => ({
   x: point.x,
   density: Number((point.density / maxDensity).toFixed(4)),
 }))
+
+const modePoint = distributionData.reduce((bestPoint, currentPoint) =>
+  currentPoint.density > bestPoint.density ? currentPoint : bestPoint,
+)
+
+const modeX = modePoint.x
+const medianX = 45
+const meanX = 60
 
 function DistributionSketch() {
   return (

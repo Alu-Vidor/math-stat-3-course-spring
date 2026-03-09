@@ -118,7 +118,7 @@ function Practice1_Screen7({ setContextNotes }) {
             Вместо одного числа мы строим диапазон, который с заданным уровнем доверия накрывает
             истинное значение генерального параметра.
           </p>
-          <MathBlock formula="\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}" />
+          <MathBlock formula={String.raw`\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}`} />
           <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-800/40">
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
               Эта формула состоит из трех частей:
@@ -150,7 +150,7 @@ function Practice1_Screen7({ setContextNotes }) {
               В реальной задаче дисперсия почти всегда неизвестна, поэтому на практике чаще
               используют не z-интервал, а t-интервал:
             </p>
-            <MathBlock formula="\bar{x} \pm t_{\alpha/2,\;n-1}\frac{s}{\sqrt{n}}" />
+            <MathBlock formula={String.raw`\bar{x} \pm t_{\alpha/2,\;n-1}\frac{s}{\sqrt{n}}`} />
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
               Здесь <em>s</em> — выборочное стандартное отклонение, а число степеней свободы равно{' '}
               <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">n - 1</code>.

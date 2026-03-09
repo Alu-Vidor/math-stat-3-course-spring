@@ -120,7 +120,7 @@ function Practice1_Screen3({ setContext, setContextNotes }) {
             Среднее арифметическое складывает все наблюдения и делит сумму на их количество. Оно
             использует именно <strong>значения</strong> элементов, а не только их порядок.
           </p>
-          <MathBlock formula="\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i = \frac{1695}{10} = 169.5" />
+          <MathBlock formula={String.raw`\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i = \frac{1695}{10} = 169.5`} />
           <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
             <strong>Результат: 169.5 баллов.</strong> Это абсурдный ответ: средний балл оказался
             выше максимума теста. Значит, формула посчитана верно, но сама метрика в этой ситуации
@@ -135,13 +135,13 @@ function Practice1_Screen3({ setContext, setContextNotes }) {
             значение через <code className="rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">M</code>,
             то получим:
           </p>
-          <MathBlock formula="\bar{x}(M) = \frac{695 + M}{10}" />
+          <MathBlock formula={String.raw`\bar{x}(M) = \frac{695 + M}{10}`} />
           <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
             Эта запись важна: как только <code className="rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">M</code>{' '}
             растет, среднее растет вместе с ним. Если бы вместо 1000 стояло 88, то мы получили бы
             вполне нормальное среднее:
           </p>
-          <MathBlock formula="\bar{x}_{\text{без бага}} = \frac{695 + 88}{10} = 78.3" />
+          <MathBlock formula={String.raw`\bar{x}_{\text{без бага}} = \frac{695 + 88}{10} = 78.3`} />
           <p className="max-w-3xl text-base leading-relaxed text-slate-700 dark:text-slate-200">
             Один неверный элемент сдвинул центр выборки с 78.3 до 169.5. Именно поэтому среднее
             арифметическое называют чувствительным к выбросам.

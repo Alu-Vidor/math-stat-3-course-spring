@@ -49,7 +49,7 @@ function Practice1_Screen4({ setContextNotes }) {
             Алгоритм прост: сортируем по возрастанию и берем элемент прямо по центру.
           </p>
 
-          <MathBlock formula="Me = \begin{cases} x_{(\frac{n+1}{2})}, & n \text{ нечетно} \\[4pt] \frac{x_{(n/2)} + x_{(n/2+1)}}{2}, & n \text{ четно} \end{cases}" />
+          <MathBlock formula={String.raw`Me = \begin{cases} x_{(\frac{n+1}{2})}, & n \text{ нечетно} \\[4pt] \frac{x_{(n/2)} + x_{(n/2+1)}}{2}, & n \text{ четно} \end{cases}`} />
 
           <SortVisualization
             values={sortedScores}
@@ -57,7 +57,7 @@ function Practice1_Screen4({ setContextNotes }) {
             caption="Так как элементов 10 (четное число), берем два центральных"
           />
 
-          <MathBlock formula="Me = \frac{x_{(5)} + x_{(6)}}{2} = \frac{78 + 80}{2} = 79" />
+          <MathBlock formula={String.raw`Me = \frac{x_{(5)} + x_{(6)}}{2} = \frac{78 + 80}{2} = 79`} />
 
           <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
             <strong>Результат: 79 баллов.</strong> Эта оценка прекрасно описывает реальную

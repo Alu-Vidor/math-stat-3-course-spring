@@ -1,10 +1,20 @@
 import katex from 'katex'
 
 function MathBlock({ formula, block = true }) {
-  const rendered = katex.renderToString(formula, {
-    throwOnError: false,
-    displayMode: block,
-  })
+  let rendered
+
+  try {
+    rendered = katex.renderToString(formula, {
+      throwOnError: true,
+      displayMode: block,
+    })
+  } catch (error) {
+    console.error(`KaTeX render failed for formula: ${formula}`, error)
+    rendered = katex.renderToString(formula, {
+      throwOnError: false,
+      displayMode: block,
+    })
+  }
 
   return (
     <div

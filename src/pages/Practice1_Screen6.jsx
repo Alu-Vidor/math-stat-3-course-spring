@@ -65,7 +65,7 @@ const contextNotes = [
     text: (
       <>
         <p>Строгое определение эмпирической функции распределения выглядит так:</p>
-        <MathBlock formula="\hat{F}_n(x) = \frac{1}{n} \sum_{i=1}^{n} I(X_i \le x)" />
+        <MathBlock formula={String.raw`\hat{F}_n(x) = \frac{1}{n} \sum_{i=1}^{n} I(X_i \le x)`} />
         <p>
           Где <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">n</code> —
           объем выборки, а <code className="rounded bg-slate-200 px-1.5 py-0.5 text-xs dark:bg-slate-700">I</code> —
@@ -88,7 +88,7 @@ const contextNotes = [
     text: (
       <>
         <p>ECDF является естественной оценкой истинной функции распределения <em>F(x)</em>.</p>
-        <MathBlock formula="\sup_x |\hat F_n(x) - F(x)| \to 0 \quad \text{при } n \to \infty" />
+        <MathBlock formula={String.raw`\sup_x |\hat F_n(x) - F(x)| \to 0 \quad \text{при } n \to \infty`} />
         <p>То есть при росте выборки эмпирическая кривая равномерно приближается к теоретической.</p>
       </>
     ),
@@ -132,7 +132,7 @@ function Practice1_Screen6({ setContextNotes }) {
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
               Если гистограмму нормировать, она становится грубой оценкой плотности распределения:
             </p>
-            <MathBlock formula="\hat f_h(x) = \frac{1}{nh} \sum_{i=1}^{n} I\!\left(x_i \in [a_j, a_j + h)\right), \quad x \in [a_j, a_j + h)" />
+            <MathBlock formula={String.raw`\hat f_h(x) = \frac{1}{nh} \sum_{i=1}^{n} I\!\left(x_i \in [a_j, a_j + h)\right), \quad x \in [a_j, a_j + h)`} />
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
               Здесь <em>h</em> — ширина корзины. Именно поэтому выбор `bins` или ширины интервала влияет не
               только на внешний вид, но и на саму статистическую оценку формы распределения.
@@ -185,7 +185,7 @@ function Practice1_Screen6({ setContextNotes }) {
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
               Формально ECDF оценивает вероятность события <em>X ≤ x</em>:
             </p>
-            <MathBlock formula="F(x) = P(X \le x), \qquad \hat F_n(x) = \frac{1}{n}\sum_{i=1}^{n} I(X_i \le x)" />
+            <MathBlock formula={String.raw`F(x) = P(X \le x), \qquad \hat F_n(x) = \frac{1}{n}\sum_{i=1}^{n} I(X_i \le x)`} />
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
               В отличие от гистограммы здесь нет параметра ширины корзины, поэтому ECDF не вводит
               дополнительного сглаживания и сохраняет все точки выборки.
