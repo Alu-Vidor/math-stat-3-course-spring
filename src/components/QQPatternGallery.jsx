@@ -3,27 +3,81 @@ const patternCards = [
     title: 'Почти нормальное распределение',
     tone:
       'border-blue-200 bg-blue-50/80 dark:border-blue-900/50 dark:bg-blue-950/20',
-    points:
-      '12,86 34,64 52,49 70,35 88,22 106,10 124,24 142,38 160,53 178,67 196,82',
+    xDomain: [-2.6, 2.6],
+    yDomain: [-2.6, 2.6],
+    points: [
+      { x: -2.3, y: -2.2 },
+      { x: -1.8, y: -1.85 },
+      { x: -1.3, y: -1.28 },
+      { x: -0.8, y: -0.82 },
+      { x: -0.3, y: -0.27 },
+      { x: 0.2, y: 0.24 },
+      { x: 0.7, y: 0.66 },
+      { x: 1.2, y: 1.25 },
+      { x: 1.7, y: 1.74 },
+      { x: 2.2, y: 2.18 },
+    ],
     takeaway: 'Точки идут вдоль диагонали без систематического изгиба.',
   },
   {
     title: 'Правая асимметрия',
     tone:
       'border-amber-200 bg-amber-50/80 dark:border-amber-900/50 dark:bg-amber-950/20',
-    points:
-      '12,108 34,100 52,94 70,86 88,74 106,58 124,40 142,26 160,16 178,10 196,7',
+    xDomain: [-2.6, 2.6],
+    yDomain: [-2.6, 5.5],
+    points: [
+      { x: -2.3, y: -1.8 },
+      { x: -1.8, y: -1.5 },
+      { x: -1.3, y: -1.18 },
+      { x: -0.8, y: -0.75 },
+      { x: -0.3, y: -0.15 },
+      { x: 0.2, y: 0.48 },
+      { x: 0.7, y: 1.12 },
+      { x: 1.2, y: 1.95 },
+      { x: 1.7, y: 2.95 },
+      { x: 2.2, y: 4.2 },
+    ],
     takeaway: 'Правый хвост тяжелее нормы: верхние квантили резко уходят вверх.',
   },
   {
     title: 'Тяжелые хвосты',
     tone:
       'border-teal-200 bg-teal-50/80 dark:border-teal-900/50 dark:bg-teal-950/20',
-    points:
-      '12,110 34,92 52,72 70,54 88,40 106,32 124,40 142,54 160,72 178,92 196,110',
+    xDomain: [-2.6, 2.6],
+    yDomain: [-4.6, 4.6],
+    points: [
+      { x: -2.3, y: -4.0 },
+      { x: -1.8, y: -2.95 },
+      { x: -1.3, y: -1.85 },
+      { x: -0.8, y: -0.95 },
+      { x: -0.3, y: -0.28 },
+      { x: 0.2, y: 0.18 },
+      { x: 0.7, y: 0.82 },
+      { x: 1.2, y: 1.72 },
+      { x: 1.7, y: 2.85 },
+      { x: 2.2, y: 4.02 },
+    ],
     takeaway: 'Оба хвоста отклоняются сильнее центра: получается выраженная S-форма.',
   },
 ]
+
+function scaleX(value, [min, max]) {
+  const left = 16
+  const width = 176
+  return left + ((value - min) / (max - min)) * width
+}
+
+function scaleY(value, [min, max]) {
+  const top = 14
+  const height = 94
+  return top + height - ((value - min) / (max - min)) * height
+}
+
+function pointsToSvg(points, xDomain, yDomain) {
+  return points
+    .map(({ x, y }) => `${scaleX(x, xDomain).toFixed(1)},${scaleY(y, yDomain).toFixed(1)}`)
+    .join(' ')
+}
 
 function QQPatternGallery() {
   return (
@@ -39,25 +93,34 @@ function QQPatternGallery() {
 
           <div className="mt-4 rounded-[1.25rem] border border-white/70 bg-white/90 p-3 dark:border-slate-700 dark:bg-slate-950/80">
             <svg viewBox="0 0 208 120" className="h-40 w-full" role="img" aria-label={card.title}>
-              <line x1="10" y1="110" x2="198" y2="110" stroke="#94a3b8" strokeWidth="1.5" />
-              <line x1="12" y1="108" x2="12" y2="10" stroke="#94a3b8" strokeWidth="1.5" />
+              <line x1="14" y1="108" x2="194" y2="108" stroke="#94a3b8" strokeWidth="1.5" />
+              <line x1="16" y1="106" x2="16" y2="12" stroke="#94a3b8" strokeWidth="1.5" />
               <line
-                x1="12"
-                y1="108"
-                x2="196"
-                y2="10"
+                x1={scaleX(card.xDomain[0], card.xDomain)}
+                y1={scaleY(card.xDomain[0], card.yDomain)}
+                x2={scaleX(card.xDomain[1], card.xDomain)}
+                y2={scaleY(card.xDomain[1], card.yDomain)}
                 stroke="#e11d48"
                 strokeWidth="2"
                 strokeDasharray="6 6"
               />
               <polyline
-                points={card.points}
+                points={pointsToSvg(card.points, card.xDomain, card.yDomain)}
                 fill="none"
                 stroke="#0f172a"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
+              {card.points.map((point, index) => (
+                <circle
+                  key={`${card.title}-${index}`}
+                  cx={scaleX(point.x, card.xDomain)}
+                  cy={scaleY(point.y, card.yDomain)}
+                  r="2.75"
+                  fill="#0f172a"
+                />
+              ))}
             </svg>
           </div>
 

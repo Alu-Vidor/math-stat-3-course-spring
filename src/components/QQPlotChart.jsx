@@ -69,7 +69,7 @@ function QQPlotChart({ variant = 'normal' }) {
       data: skewedData,
       pointColor: '#ea580c',
       lineColor: '#a855f7',
-      yDomain: [-1.5, 5.5],
+      yDomain: [-2.6, 5.5],
     },
     'heavy-tails': {
       data: heavyTailsData,
