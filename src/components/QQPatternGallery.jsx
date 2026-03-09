@@ -93,8 +93,24 @@ function QQPatternGallery() {
 
           <div className="mt-4 rounded-[1.25rem] border border-white/70 bg-white/90 p-3 dark:border-slate-700 dark:bg-slate-950/80">
             <svg viewBox="0 0 208 120" className="h-40 w-full" role="img" aria-label={card.title}>
-              <line x1="14" y1="108" x2="194" y2="108" stroke="#94a3b8" strokeWidth="1.5" />
-              <line x1="16" y1="106" x2="16" y2="12" stroke="#94a3b8" strokeWidth="1.5" />
+              <line
+                x1="14"
+                y1="108"
+                x2="194"
+                y2="108"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="text-slate-400 dark:text-slate-300"
+              />
+              <line
+                x1="16"
+                y1="106"
+                x2="16"
+                y2="12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="text-slate-400 dark:text-slate-300"
+              />
               <line
                 x1={scaleX(card.xDomain[0], card.xDomain)}
                 y1={scaleY(card.xDomain[0], card.yDomain)}
@@ -107,10 +123,11 @@ function QQPatternGallery() {
               <polyline
                 points={pointsToSvg(card.points, card.xDomain, card.yDomain)}
                 fill="none"
-                stroke="#0f172a"
+                stroke="currentColor"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="text-slate-900 dark:text-slate-100"
               />
               {card.points.map((point, index) => (
                 <circle
@@ -118,7 +135,8 @@ function QQPatternGallery() {
                   cx={scaleX(point.x, card.xDomain)}
                   cy={scaleY(point.y, card.yDomain)}
                   r="2.75"
-                  fill="#0f172a"
+                  fill="currentColor"
+                  className="text-slate-900 dark:text-slate-100"
                 />
               ))}
             </svg>

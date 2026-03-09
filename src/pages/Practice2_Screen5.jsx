@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Eye, FlaskConical, ScrollText } from 'lucide-react'
 import CourseHeader from '../components/CourseHeader'
 import CodeBlock from '../components/CodeBlock'
+import MathBlock from '../components/MathBlock'
 import PlotViewer from '../components/PlotViewer'
 import KeyIdea from '../components/KeyIdea'
 import MathText from '../components/MathText'
@@ -116,6 +117,87 @@ function Practice2_Screen5({ setContextNotes }) {
               </article>
             )
           })}
+        </section>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Математический минимум для QQ-plot
+          </h3>
+          <MathText
+            as="p"
+            text="Этот график опирается не на средние и дисперсии, а на квантили. Поэтому здесь полезно помнить только четыре базовых объекта: уровень $p$, квантиль, упорядоченную выборку и теоретическое распределение, с которым мы сравниваем данные."
+            className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-200"
+          />
+
+          <div className="mt-4 grid gap-4 xl:grid-cols-2">
+            <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                1. Квантиль уровня $p$
+              </h4>
+              <MathText
+                as="p"
+                text="Для распределения с функцией распределения $F(x)$ квантиль уровня $p$ - это такое число $q_p$, что доля значений левее него примерно равна $p$."
+                className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+              <MathBlock formula={String.raw`q_p = F^{-1}(p), \qquad 0 < p < 1`} />
+              <MathText
+                as="p"
+                text="Например, квантиль уровня $0.5$ - это медиана, а квантиль уровня $0.95$ отделяет верхние $5\%$ наблюдений."
+                className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+            </article>
+
+            <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                2. Порядковые статистики
+              </h4>
+              <MathText
+                as="p"
+                text="Если отсортировать выборку, получим упорядоченные наблюдения $x_{(1)} \\le x_{(2)} \\le \\dots \\le x_{(n)}$. Именно они играют роль эмпирических квантилей."
+                className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+              <MathBlock formula={String.raw`x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}`} />
+              <MathText
+                as="p"
+                text="Нижние индексы описывают левый хвост, центральные - середину распределения, верхние - правый хвост."
+                className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+            </article>
+
+            <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                3. Какие точки строит QQ-plot
+              </h4>
+              <MathText
+                as="p"
+                text="Для каждого индекса $i$ берут один и тот же уровень вероятности $p_i$ и ставят рядом две величины: теоретический квантиль и соответствующий ему эмпирический квантиль выборки."
+                className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+              <MathBlock formula={String.raw`p_i \approx \frac{i - 0.5}{n}, \qquad \bigl(q^{\text{theory}}_{p_i},\; x_{(i)}\bigr)`} />
+              <MathText
+                as="p"
+                text="В нормальном QQ-plot по оси $x$ стоит $q^{\text{theory}}_{p_i}$ для $N(0,1)$ или другой выбранной нормали, а по оси $y$ - отсортированные данные."
+                className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+            </article>
+
+            <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                4. Почему диагональ важна
+              </h4>
+              <MathText
+                as="p"
+                text="Если эмпирические квантили почти совпадают с теоретическими, все точки ложатся примерно на прямую. Это означает, что выборка имеет форму, близкую к выбранному распределению."
+                className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+              <MathBlock formula={String.raw`x_{(i)} \approx q^{\text{theory}}_{p_i}`} />
+              <MathText
+                as="p"
+                text="Если совпадение нарушается систематически, график начинает изгибаться: по форме этого изгиба мы и распознаем асимметрию, тяжелые хвосты или выбросы."
+                className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
+            </article>
+          </div>
         </section>
 
         <section className="space-y-4">
