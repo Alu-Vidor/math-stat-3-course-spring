@@ -62,21 +62,21 @@ const tradeoffCards = [
     icon: ShieldAlert,
     title: 'Ошибка I рода',
     text: 'Ложная тревога: принимаем шум за открытие.',
-    formula: '\\alpha = P(\\text{reject } H_0 \\mid H_0 \\text{ true})',
+    formula: String.raw`\alpha = P(\text{reject } H_0 \mid H_0\, \text{ true})`,
     tone: 'rose',
   },
   {
     icon: ShieldCheck,
     title: 'Ошибка II рода',
     text: 'Пропущенный сигнал: эффект есть, но тест молчит.',
-    formula: '\\beta = P(\\text{fail to reject } H_0 \\mid H_1 \\text{ true})',
+    formula: String.raw`\beta = P(\text{fail to reject } H_0 \mid H_1\, \text{ true})`,
     tone: 'sky',
   },
   {
     icon: TrendingUp,
     title: 'Мощность',
     text: 'Шанс действительно заметить эффект, если он существует.',
-    formula: '1-\\beta',
+    formula: String.raw`1 - \beta`,
     tone: 'emerald',
   },
 ]
@@ -111,7 +111,7 @@ function Practice2_Screen3({ setContextNotes }) {
 
         <PlotViewer
           title="Как меняются α, β и мощность"
-          caption="Чем строже порог принятия решения, тем меньше α, но тем труднее поймать реальный эффект. Мощность падает, если размер выборки не растёт."
+          caption="Слева — мягкий порог: тест чаще объявляет эффект. Справа — строгий порог: α падает, но β растёт, а мощность снижается."
         >
           <ErrorTradeoffChart />
         </PlotViewer>
@@ -143,7 +143,7 @@ function Practice2_Screen3({ setContextNotes }) {
             Если сделать правило слишком строгим, чтобы почти никогда не получать ложных тревог,
             тест начнет часто пропускать реальные эффекты. Это и есть фундаментальный компромисс.
           </p>
-          <MathBlock formula="\\alpha \\downarrow \\Rightarrow \\beta \\uparrow, \\qquad \\alpha \\uparrow \\Rightarrow \\beta \\downarrow" />
+          <MathBlock formula={String.raw`\alpha \downarrow \; \Rightarrow \; \beta \uparrow, \qquad \alpha \uparrow \; \Rightarrow \; \beta \downarrow`} />
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
             <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/80">
               <MathText as="p" text="Низкий $\\alpha$" className="text-sm font-semibold text-slate-900 dark:text-white" />
