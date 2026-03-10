@@ -1,6 +1,22 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Dices, Sigma, TriangleAlert } from 'lucide-react'
+import { ArrowRight, Calculator, Dices, Sigma, Target, TriangleAlert } from 'lucide-react'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ComposedChart,
+  Area,
+  Legend,
+  Line,
+  ReferenceArea,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import CourseHeader from '../components/CourseHeader'
 import MathBlock from '../components/MathBlock'
 import CodeBlock from '../components/CodeBlock'
@@ -8,6 +24,7 @@ import KeyIdea from '../components/KeyIdea'
 import MathText from '../components/MathText'
 import TerminalOutput from '../components/TerminalOutput'
 import ComparisonTable from '../components/ComparisonTable'
+import PlotViewer from '../components/PlotViewer'
 
 const contextNotes = [
   {
@@ -32,6 +49,46 @@ const comparisonRows = [
     values: [5, 8, 9, 12, 14, 12],
     highlight: true,
   },
+]
+
+const contributionRows = [
+  { face: '1', observed: 5, expected: 10, diff: -5, contribution: 2.5 },
+  { face: '2', observed: 8, expected: 10, diff: -2, contribution: 0.4 },
+  { face: '3', observed: 9, expected: 10, diff: -1, contribution: 0.1 },
+  { face: '4', observed: 12, expected: 10, diff: 2, contribution: 0.4 },
+  { face: '5', observed: 14, expected: 10, diff: 4, contribution: 1.6 },
+  { face: '6', observed: 12, expected: 10, diff: 2, contribution: 0.4 },
+]
+
+const observedExpectedRows = contributionRows.map((item) => ({
+  face: item.face,
+  observed: item.observed,
+  expected: item.expected,
+}))
+
+const chiSquareCurveData = [
+  { x: 0, density: 0.0 },
+  { x: 1, density: 0.08 },
+  { x: 2, density: 0.14 },
+  { x: 3, density: 0.16 },
+  { x: 4, density: 0.15 },
+  { x: 5, density: 0.125 },
+  { x: 5.4, density: 0.115 },
+  { x: 6, density: 0.1 },
+  { x: 7, density: 0.075 },
+  { x: 8, density: 0.055 },
+  { x: 9, density: 0.04 },
+  { x: 10, density: 0.028 },
+  { x: 11.07, density: 0.02 },
+  { x: 12, density: 0.015 },
+  { x: 14, density: 0.008 },
+  { x: 16, density: 0.004 },
+]
+
+const summaryCards = [
+  { label: 'Статистика', value: 'χ² = 5.40', tone: 'border-slate-200 bg-slate-50/80 dark:border-slate-700 dark:bg-slate-950/70' },
+  { label: 'Степени свободы', value: 'df = 5', tone: 'border-sky-200 bg-sky-50/80 dark:border-sky-900/50 dark:bg-sky-950/20' },
+  { label: 'Решение', value: 'p = 0.369 > 0.05', tone: 'border-emerald-200 bg-emerald-50/80 dark:border-emerald-900/50 dark:bg-emerald-950/20' },
 ]
 
 const chiSquareCode = `import scipy.stats as stats
@@ -94,43 +151,148 @@ function Practice2_Screen6({ setContextNotes }) {
           </div>
         </section>
 
-        <section className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-          <article className="rounded-[1.5rem] border border-indigo-200 bg-indigo-50/70 p-6 dark:border-indigo-900/50 dark:bg-indigo-950/20">
-            <div className="flex items-start gap-3">
-              <Sigma size={20} className="mt-1 shrink-0 text-indigo-600 dark:text-indigo-300" />
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold tracking-tight text-indigo-900 dark:text-indigo-200">
-                  Визуализация распределения
-                </h3>
-                <MathText
-                  as="p"
-                  text="Если кубик честный, значение этой суммы обычно болтается близко к нулю. Большие значения $\\chi^2$ означают, что наблюдаемые частоты слишком далеко ушли от ожидаемых."
-                  className="text-base leading-relaxed text-slate-700 dark:text-slate-200"
-                />
-                <MathText
-                  as="p"
-                  text="Логика решения такая же, как у других критериев: если статистика улетает далеко вправо, мы попадаем в критическую зону и отвергаем $H_0$."
-                  className="text-base leading-relaxed text-slate-700 dark:text-slate-200"
-                />
-              </div>
-            </div>
+        <PlotViewer
+          title="Observed vs Expected по каждой грани"
+          caption="Синие столбцы показывают ожидаемые частоты, янтарные — наблюдаемые. Чем сильнее расходятся пары столбцов, тем больше вклад соответствующей категории в статистику χ²."
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={observedExpectedRows} margin={{ top: 12, right: 16, left: 0, bottom: 4 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+              <XAxis dataKey="face" tickLine={false} axisLine={false} />
+              <YAxis tickLine={false} axisLine={false} />
+              <Tooltip />
+              <Legend verticalAlign="top" height={28} />
+              <Bar dataKey="expected" name="Expected" fill="#6366f1" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="observed" name="Observed" fill="#f59e0b" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </PlotViewer>
+
+        <section className="grid gap-4 lg:grid-cols-2">
+          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">Что показывает этот график</h3>
+            <MathText
+              as="p"
+              text="Он отвечает на первый вопрос: где именно данные расходятся с моделью. Здесь самые заметные отклонения у граней 1 и 5."
+              className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
           </article>
 
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">Чего он не показывает</h3>
+            <MathText
+              as="p"
+              text="Визуальный перекос еще не означает статистическую значимость. Нужно понять, редок ли такой рисунок при честном кубике."
+              className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
+          </article>
+        </section>
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          {summaryCards.map((card) => (
+            <article key={card.label} className={`rounded-[1.5rem] border p-5 shadow-soft ${card.tone}`}>
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-600 dark:text-slate-300">
+                {card.label}
+              </p>
+              <p className="mt-3 text-xl font-semibold text-slate-900 dark:text-white">{card.value}</p>
+            </article>
+          ))}
+        </div>
+
+        <PlotViewer
+          title="Где находится наше значение χ²"
+          caption="Для df = 5 правый хвост соответствует редким большим отклонениям. Наша статистика χ² = 5.4 лежит левее критической границы около 11.07, поэтому оснований отвергать H₀ нет."
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={chiSquareCurveData} margin={{ top: 16, right: 24, left: 0, bottom: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+              <XAxis dataKey="x" type="number" tickLine={false} axisLine={false} domain={[0, 16]} />
+              <YAxis hide domain={[0, 0.18]} />
+              <Tooltip
+                formatter={(value) => [value, 'Плотность']}
+                labelFormatter={(label) => `χ² = ${label}`}
+              />
+              <ReferenceArea x1={11.07} x2={16} fill="#fecaca" fillOpacity={0.35} />
+              <Area type="monotone" dataKey="density" stroke="#6366f1" fill="#c7d2fe" fillOpacity={0.55} />
+              <Line type="monotone" dataKey="density" stroke="#4f46e5" dot={false} strokeWidth={2} />
+              <ReferenceLine x={5.4} stroke="#f59e0b" strokeWidth={2} />
+              <ReferenceLine x={11.07} stroke="#dc2626" strokeDasharray="5 5" />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </PlotViewer>
+
+        <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+          <article className="rounded-[1.5rem] border border-indigo-200 bg-indigo-50/70 p-5 shadow-soft dark:border-indigo-900/50 dark:bg-indigo-950/20">
             <div className="flex items-start gap-3">
-              <TriangleAlert size={20} className="mt-1 shrink-0 text-amber-600 dark:text-amber-300" />
+              <Sigma size={20} className="mt-1 shrink-0 text-indigo-600 dark:text-indigo-300" />
               <div>
-                <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-                  Как не сломать тест
-                </h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-white">Как читать распределение</h3>
                 <MathText
                   as="p"
-                  text="Пирсон работает на частотах, а не на сырых числах. Поэтому категории должны быть определены заранее, а ожидаемые частоты в каждой корзине не должны быть слишком маленькими."
+                  text="Большие значения $\\chi^2$ лежат справа. Именно правый хвост образует критическую зону, где расхождение уже считается слишком сильным для случайности."
                   className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
                 />
               </div>
             </div>
           </article>
+
+          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">Вывод по нашему примеру</h3>
+            <MathText
+              as="p"
+              text="Наша статистика $\\chi^2 = 5.4$ стоит заметно левее критической границы. Значит, такого расхождения еще недостаточно, чтобы отвергнуть $H_0$."
+              className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
+          </article>
+        </section>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <div className="flex items-start gap-3">
+            <TriangleAlert size={20} className="mt-1 shrink-0 text-amber-600 dark:text-amber-300" />
+            <MathText
+              as="p"
+              text="Практическое ограничение: критерий Пирсона корректен, когда ожидаемые частоты в корзинах не слишком малы. Для учебного правила держите в памяти порог $E_i \\ge 5$."
+              className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
+          </div>
+        </section>
+
+        <PlotViewer
+          title="Какие грани сильнее всего тянут статистику вверх"
+          caption="Самый большой вклад дают те категории, где разрыв между наблюдаемой и ожидаемой частотой максимален. В этом примере главные источники статистики — грани 1 и 5."
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={contributionRows} margin={{ top: 12, right: 16, left: 0, bottom: 4 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+              <XAxis dataKey="face" tickLine={false} axisLine={false} />
+              <YAxis tickLine={false} axisLine={false} />
+              <Tooltip
+                cursor={{ fill: 'rgba(148, 163, 184, 0.12)' }}
+                formatter={(value) => [value, 'Вклад в χ²']}
+                labelFormatter={(label) => `Грань ${label}`}
+              />
+              <ReferenceLine y={1} stroke="#f59e0b" strokeDasharray="5 5" />
+              <Bar dataKey="contribution" radius={[10, 10, 0, 0]}>
+                {contributionRows.map((item) => (
+                  <Cell
+                    key={item.face}
+                    fill={item.contribution >= 1 ? '#f59e0b' : '#6366f1'}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </PlotViewer>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <div className="flex items-start gap-3">
+            <Calculator size={20} className="mt-1 shrink-0 text-slate-700 dark:text-slate-200" />
+            <MathText
+              as="p"
+              text="Этот график показывает механику формулы: итоговая статистика складывается из вкладов отдельных категорий. В нашем примере основную массу $\\chi^2$ создают две грани, а не все шесть одинаково."
+              className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
+          </div>
         </section>
 
         <section className="space-y-4">
@@ -146,6 +308,23 @@ function Practice2_Screen6({ setContextNotes }) {
           <TerminalOutput
             lines={['Статистика Хи-квадрат: 5.40', 'P-value: 0.3690']}
           />
+        </section>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <div className="flex items-start gap-3">
+            <Target size={20} className="mt-1 shrink-0 text-indigo-600 dark:text-indigo-300" />
+            <div className="grid flex-1 gap-3 md:grid-cols-3">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+                <MathText text="$H_0$: частоты согласуются с моделью" className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+                <MathText text="Считаем $\\chi^2$, $df$ и $p$-value" className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+                <MathText text="Если $p > \\alpha$, то $H_0$ не отвергается" className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
+              </div>
+            </div>
+          </div>
         </section>
 
         <KeyIdea title="Как читать результат?">
