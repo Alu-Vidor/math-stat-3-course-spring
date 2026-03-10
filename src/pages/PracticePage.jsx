@@ -153,6 +153,36 @@ function GenericPractice({ id, setContext }) {
   )
 }
 
+function ComingSoonPracticeScreen({ practiceNumber, screenNumber, setContext, setContextNotes }) {
+  useEffect(() => {
+    setContext({
+      title: 'СКОРО...',
+      text:
+        screenNumber === undefined
+          ? `Практика ${practiceNumber} в разработке.`
+          : `Практика ${practiceNumber}, экран ${screenNumber} в разработке.`,
+    })
+    setContextNotes([
+      {
+        title: 'Статус',
+        text: 'СКОРО...',
+      },
+    ])
+  }, [practiceNumber, screenNumber, setContext, setContextNotes])
+
+  return (
+    <article className="content-block">
+      <div className="rounded-[1.75rem] border border-indigo-200 bg-indigo-50/70 p-8 text-center shadow-soft dark:border-indigo-900/50 dark:bg-indigo-950/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.1em] text-indigo-700 dark:text-indigo-300">
+          Практика {practiceNumber}
+          {screenNumber !== undefined ? ` · Экран ${screenNumber}` : ''}
+        </p>
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-900 dark:text-white">СКОРО...</h2>
+      </div>
+    </article>
+  )
+}
+
 function PracticePage({ practiceNumber, screenNumber, setContext, setContextNotes }) {
   if (practiceNumber === 1 && (screenNumber === undefined || screenNumber === 1)) {
     return <Practice1_Screen1 setContextNotes={setContextNotes} />
@@ -232,6 +262,17 @@ function PracticePage({ practiceNumber, screenNumber, setContext, setContextNote
 
   if (practiceNumber === 2 && screenNumber === 8) {
     return <Practice2_Screen8 setContextNotes={setContextNotes} />
+  }
+
+  if (practiceNumber >= 3 && practiceNumber <= 6) {
+    return (
+      <ComingSoonPracticeScreen
+        practiceNumber={practiceNumber}
+        screenNumber={screenNumber}
+        setContext={setContext}
+        setContextNotes={setContextNotes}
+      />
+    )
   }
 
   return <GenericPractice id={practiceNumber} setContext={setContext} />

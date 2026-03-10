@@ -274,7 +274,7 @@ function Practice2_Screen6({ setContextNotes }) {
                 <h3 className="text-base font-semibold text-slate-900 dark:text-white">Как читать распределение</h3>
                 <MathText
                   as="p"
-                  text="Большие значения $\\chi^2$ лежат справа. Именно правый хвост образует критическую зону, где расхождение уже считается слишком сильным для случайности."
+                  text={String.raw`Большие значения $\chi^2$ лежат справа. Именно правый хвост образует критическую зону, где расхождение уже считается слишком сильным для случайности.`}
                   className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
                 />
               </div>
@@ -285,7 +285,7 @@ function Practice2_Screen6({ setContextNotes }) {
             <h3 className="text-base font-semibold text-slate-900 dark:text-white">Вывод по нашему примеру</h3>
             <MathText
               as="p"
-              text="Наша статистика $\\chi^2 = 5.4$ стоит заметно левее критической границы. Значит, такого расхождения еще недостаточно, чтобы отвергнуть $H_0$."
+              text={String.raw`Наша статистика $\chi^2 = 5.4$ стоит заметно левее критической границы. Значит, такого расхождения еще недостаточно, чтобы отвергнуть $H_0$.`}
               className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
             />
           </article>
@@ -296,7 +296,7 @@ function Practice2_Screen6({ setContextNotes }) {
             <TriangleAlert size={20} className="mt-1 shrink-0 text-amber-600 dark:text-amber-300" />
             <MathText
               as="p"
-              text="Практическое ограничение: критерий Пирсона корректен, когда ожидаемые частоты в корзинах не слишком малы. Для учебного правила держите в памяти порог $E_i \\ge 5$."
+              text={String.raw`Практическое ограничение: критерий Пирсона корректен, когда ожидаемые частоты в корзинах не слишком малы. Для учебного правила держите в памяти порог $E_i \ge 5$.`}
               className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
             />
           </div>
@@ -334,7 +334,7 @@ function Practice2_Screen6({ setContextNotes }) {
             <Calculator size={20} className="mt-1 shrink-0 text-slate-700 dark:text-slate-200" />
             <MathText
               as="p"
-              text="Этот график показывает механику формулы: итоговая статистика складывается из вкладов отдельных категорий. В нашем примере основную массу $\\chi^2$ создают две грани, а не все шесть одинаково."
+              text={String.raw`Этот график показывает механику формулы: итоговая статистика складывается из вкладов отдельных категорий. В нашем примере основную массу $\chi^2$ создают две грани, а не все шесть одинаково.`}
               className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
             />
           </div>
@@ -381,7 +381,7 @@ function Practice2_Screen6({ setContextNotes }) {
               <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">Шаг 4</p>
               <MathText
                 as="p"
-                text="Проверяем условие $E_i \\ge 5$ и при необходимости объединяем хвост."
+                text={String.raw`Проверяем условие $E_i \ge 5$ и при необходимости объединяем хвост.`}
                 className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
               />
             </div>
@@ -422,10 +422,10 @@ function Practice2_Screen6({ setContextNotes }) {
                 <MathText text="$H_0$: частоты согласуются с моделью" className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
-                <MathText text="Считаем $\\chi^2$, $df$ и $p$-value" className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
+                <MathText text={String.raw`Считаем $\chi^2$, $df$ и $p$-value`} className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
-                <MathText text="Если $p > \\alpha$, то $H_0$ не отвергается" className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
+                <MathText text={String.raw`Если $p > \alpha$, то $H_0$ не отвергается`} className="text-sm leading-relaxed text-slate-700 dark:text-slate-200" />
               </div>
             </div>
           </div>
@@ -434,7 +434,7 @@ function Practice2_Screen6({ setContextNotes }) {
         <KeyIdea title="Как читать результат?">
           <MathText
             as="p"
-            text="Наш p-value равен 0.369, то есть около 37%. Это заметно больше стандартного порога $\\alpha = 0.05$. Значит, мы не отвергаем нулевую гипотезу: перекос между 5 единицами и 14 пятерками для 60 бросков еще выглядит как нормальная случайность, а не как улика против честного кубика."
+            text={String.raw`Наш p-value равен 0.369, то есть около 37%. Это заметно больше стандартного порога $\alpha = 0.05$. Значит, мы не отвергаем нулевую гипотезу: перекос между 5 единицами и 14 пятерками для 60 бросков еще выглядит как нормальная случайность, а не как улика против честного кубика.`}
           />
         </KeyIdea>
 

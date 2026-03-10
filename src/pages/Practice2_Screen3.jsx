@@ -146,11 +146,11 @@ function Practice2_Screen3({ setContextNotes }) {
           <MathBlock formula={String.raw`\alpha \downarrow \; \Rightarrow \; \beta \uparrow, \qquad \alpha \uparrow \; \Rightarrow \; \beta \downarrow`} />
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
             <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/80">
-              <MathText as="p" text="Низкий $\\alpha$" className="text-sm font-semibold text-slate-900 dark:text-white" />
+              <MathText as="p" text={String.raw`Низкий $\alpha$`} className="text-sm font-semibold text-slate-900 dark:text-white" />
               <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">Меньше ложных срабатываний, но больше пропущенных эффектов.</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/80">
-              <MathText as="p" text="Высокий $\\alpha$" className="text-sm font-semibold text-slate-900 dark:text-white" />
+              <MathText as="p" text={String.raw`Высокий $\alpha$`} className="text-sm font-semibold text-slate-900 dark:text-white" />
               <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">Легче объявить эффект, но возрастает риск ошибочного внедрения.</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/80">

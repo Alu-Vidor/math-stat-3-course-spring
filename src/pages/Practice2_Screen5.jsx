@@ -183,7 +183,7 @@ function Practice2_Screen5({ setContextNotes }) {
               </h4>
               <MathText
                 as="p"
-                text="Если отсортировать выборку, получим упорядоченные наблюдения $x_{(1)} \\le x_{(2)} \\le \\dots \\le x_{(n)}$. Именно они играют роль эмпирических квантилей."
+                text={String.raw`Если отсортировать выборку, получим упорядоченные наблюдения $x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}$. Именно они играют роль эмпирических квантилей.`}
                 className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
               />
               <MathBlock formula={String.raw`x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}`} />
@@ -206,7 +206,7 @@ function Practice2_Screen5({ setContextNotes }) {
               <MathBlock formula={String.raw`p_i \approx \frac{i - 0.5}{n}, \qquad \bigl(q^{\text{theory}}_{p_i},\; x_{(i)}\bigr)`} />
               <MathText
                 as="p"
-                text="В нормальном QQ-plot по оси $x$ стоит $q^{\text{theory}}_{p_i}$ для $N(0,1)$ или другой выбранной нормали, а по оси $y$ - отсортированные данные."
+                text={String.raw`В нормальном QQ-plot по оси $x$ стоит $q^{\text{theory}}_{p_i}$ для $N(0,1)$ или другой выбранной нормали, а по оси $y$ - отсортированные данные.`}
                 className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
               />
             </article>

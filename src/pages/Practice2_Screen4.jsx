@@ -121,7 +121,7 @@ function Practice2_Screen4({ setContextNotes }) {
         <AlertBox title="Универсальное правило решения">
           <MathText
             as="p"
-            text="Частотная статистика использует только два корректных вывода: $p \\le \\alpha \\Rightarrow$ отвергаем $H_0$; $p > \\alpha \\Rightarrow$ не отвергаем $H_0$."
+            text={String.raw`Частотная статистика использует только два корректных вывода: $p \le \alpha \Rightarrow$ отвергаем $H_0$; $p > \alpha \Rightarrow$ не отвергаем $H_0$.`}
           />
           <MathText
             as="p"
@@ -173,7 +173,7 @@ function Practice2_Screen4({ setContextNotes }) {
                 <MathText text="2. Вычислите статистику критерия и соответствующее $p$-value." />
               </li>
               <li>
-                <MathText text="3. Сравните $p$-value с $\\alpha$ и сделайте вывод только про $H_0$." />
+                <MathText text={String.raw`3. Сравните $p$-value с $\alpha$ и сделайте вывод только про $H_0$.`} />
               </li>
             </ol>
           </article>
@@ -231,7 +231,7 @@ function Practice2_Screen4({ setContextNotes }) {
           <div className="mt-4 rounded-2xl border border-indigo-200 bg-indigo-50/70 p-4 dark:border-indigo-900/50 dark:bg-indigo-950/20">
             <MathText
               as="p"
-              text="Базовая формула записи: «На уровне значимости $\\alpha = 0.05$ нулевая гипотеза $H_0$ ... , поскольку $p$-value ... . Следовательно, данные ...»."
+              text={String.raw`Базовая формула записи: «На уровне значимости $\alpha = 0.05$ нулевая гипотеза $H_0$ ... , поскольку $p$-value ... . Следовательно, данные ...».`}
               className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
             />
           </div>
