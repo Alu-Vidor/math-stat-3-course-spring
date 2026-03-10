@@ -161,9 +161,11 @@ function Practice2_Screen5({ setContextNotes }) {
 
           <div className="mt-4 grid gap-4 xl:grid-cols-2">
             <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
-              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
-                1. Квантиль уровня $p$
-              </h4>
+              <MathText
+                as="h4"
+                text={String.raw`1. Квантиль уровня $p$`}
+                className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white"
+              />
               <MathText
                 as="p"
                 text="Для распределения с функцией распределения $F(x)$ квантиль уровня $p$ - это такое число $q_p$, что доля значений левее него примерно равна $p$."
@@ -178,9 +180,11 @@ function Practice2_Screen5({ setContextNotes }) {
             </article>
 
             <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
-              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
-                2. Порядковые статистики
-              </h4>
+              <MathText
+                as="h4"
+                text="2. Порядковые статистики"
+                className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white"
+              />
               <MathText
                 as="p"
                 text={String.raw`Если отсортировать выборку, получим упорядоченные наблюдения $x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}$. Именно они играют роль эмпирических квантилей.`}
@@ -195,9 +199,11 @@ function Practice2_Screen5({ setContextNotes }) {
             </article>
 
             <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
-              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
-                3. Какие точки строит QQ-plot
-              </h4>
+              <MathText
+                as="h4"
+                text="3. Какие точки строит QQ-plot"
+                className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white"
+              />
               <MathText
                 as="p"
                 text="Для каждого индекса $i$ берут один и тот же уровень вероятности $p_i$ и ставят рядом две величины: теоретический квантиль и соответствующий ему эмпирический квантиль выборки."
@@ -212,9 +218,11 @@ function Practice2_Screen5({ setContextNotes }) {
             </article>
 
             <article className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70">
-              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
-                4. Почему диагональ важна
-              </h4>
+              <MathText
+                as="h4"
+                text="4. Почему диагональ важна"
+                className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white"
+              />
               <MathText
                 as="p"
                 text="Если эмпирические квантили почти совпадают с теоретическими, все точки ложатся примерно на прямую. Это означает, что выборка имеет форму, близкую к выбранному распределению."
