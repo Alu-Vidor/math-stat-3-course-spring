@@ -379,7 +379,11 @@ function Practice2_Screen6({ setContextNotes }) {
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
               <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">Шаг 4</p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">Проверяем условие $E_i \\ge 5$ и при необходимости объединяем хвост.</p>
+              <MathText
+                as="p"
+                text="Проверяем условие $E_i \\ge 5$ и при необходимости объединяем хвост."
+                className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+              />
             </div>
           </div>
           <div className="mt-5">
@@ -428,7 +432,10 @@ function Practice2_Screen6({ setContextNotes }) {
         </section>
 
         <KeyIdea title="Как читать результат?">
-          {'Наш p-value равен 0.369, то есть около 37%. Это заметно больше стандартного порога $\\alpha = 0.05$. Значит, мы не отвергаем нулевую гипотезу: перекос между 5 единицами и 14 пятерками для 60 бросков еще выглядит как нормальная случайность, а не как улика против честного кубика.'}
+          <MathText
+            as="p"
+            text="Наш p-value равен 0.369, то есть около 37%. Это заметно больше стандартного порога $\\alpha = 0.05$. Значит, мы не отвергаем нулевую гипотезу: перекос между 5 единицами и 14 пятерками для 60 бросков еще выглядит как нормальная случайность, а не как улика против честного кубика."
+          />
         </KeyIdea>
 
         <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">

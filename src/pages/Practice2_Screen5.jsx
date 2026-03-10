@@ -172,7 +172,7 @@ function Practice2_Screen5({ setContextNotes }) {
               <MathBlock formula={String.raw`q_p = F^{-1}(p), \qquad 0 < p < 1`} />
               <MathText
                 as="p"
-                text="Например, квантиль уровня $0.5$ - это медиана, а квантиль уровня $0.95$ отделяет верхние $5\%$ наблюдений."
+                text="Например, квантиль уровня $0.5$ - это медиана, а квантиль уровня $0.95$ отделяет верхние $5\\%$ наблюдений."
                 className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
               />
             </article>

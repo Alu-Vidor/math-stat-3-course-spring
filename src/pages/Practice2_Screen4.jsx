@@ -112,7 +112,10 @@ function Practice2_Screen4({ setContextNotes }) {
         </AlertBox>
 
         <KeyIdea title="Что такое $p$-value?">
-          {'$p$-value — это вероятность получить такие же или еще более экстремальные данные при условии, что $H_0$ верна. Это число всегда интерпретируется только относительно конкретной нулевой гипотезы, а не относительно абстрактного «эффекта». '}
+          <MathText
+            as="p"
+            text="$p$-value — это вероятность получить такие же или еще более экстремальные данные при условии, что $H_0$ верна. Это число всегда интерпретируется только относительно конкретной нулевой гипотезы, а не относительно абстрактного «эффекта»."
+          />
         </KeyIdea>
 
         <AlertBox title="Универсальное правило решения">
@@ -241,7 +244,7 @@ function Practice2_Screen4({ setContextNotes }) {
           <div className="mt-4 grid gap-3 lg:grid-cols-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
             <div>
               <p className="font-semibold text-slate-900 dark:text-white">Не говорит</p>
-              <MathText as="p" text="«Вероятность истинности $H_0$ равна $3\%$», «модель доказана» или «эффект точно есть» — это неверные интерпретации." className="mt-1" />
+              <MathText as="p" text="«Вероятность истинности $H_0$ равна $3\\%$», «модель доказана» или «эффект точно есть» — это неверные интерпретации." className="mt-1" />
             </div>
             <div>
               <p className="font-semibold text-slate-900 dark:text-white">Говорит</p>
