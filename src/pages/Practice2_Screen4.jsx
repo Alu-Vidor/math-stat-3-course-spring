@@ -54,6 +54,21 @@ const examples = [
   },
 ]
 
+const reportLines = [
+  {
+    title: 'Шаг 1. Формула решения',
+    text: 'Сначала даем чисто статистический вердикт: сравниваем $p$-value с $\\alpha$ и пишем только про $H_0$.',
+  },
+  {
+    title: 'Шаг 2. Предметный смысл',
+    text: 'Затем переводим это решение на язык задачи: нормальность, логнормальность, среднее, коэффициент и т.д.',
+  },
+  {
+    title: 'Шаг 3. Осторожность',
+    text: 'Не используем формулировки «доказано» и «точно». Частотная статистика работает языком оснований и согласия с данными.',
+  },
+]
+
 function Practice2_Screen4({ setContextNotes }) {
   useEffect(() => {
     setContextNotes(contextNotes)
@@ -186,6 +201,36 @@ function Practice2_Screen4({ setContextNotes }) {
                 ))}
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Шаблон вывода для отчета
+          </h3>
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            {reportLines.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70"
+              >
+                <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                  {item.title}
+                </h4>
+                <MathText
+                  as="p"
+                  text={item.text}
+                  className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+                />
+              </article>
+            ))}
+          </div>
+          <div className="mt-4 rounded-2xl border border-indigo-200 bg-indigo-50/70 p-4 dark:border-indigo-900/50 dark:bg-indigo-950/20">
+            <MathText
+              as="p"
+              text="Базовая формула записи: «На уровне значимости $\\alpha = 0.05$ нулевая гипотеза $H_0$ ... , поскольку $p$-value ... . Следовательно, данные ...»."
+              className="text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+            />
           </div>
         </section>
 

@@ -69,6 +69,24 @@ const testForms = [
   },
 ]
 
+const reportTemplates = [
+  {
+    title: 'Параметрическая гипотеза',
+    text: 'Когда проверяем среднее, долю или другой параметр, нулевая гипотеза почти всегда фиксирует конкретное числовое значение.',
+    formula: 'H_0: \\theta = \\theta_0, \\qquad H_1: \\theta \\neq \\theta_0',
+  },
+  {
+    title: 'Гипотеза о распределении',
+    text: 'Когда задача касается формы выборки, гипотеза формулируется как согласие данных с выбранным законом.',
+    formula: 'H_0: F(x)=F_0(x), \\qquad H_1: F(x) \\neq F_0(x)',
+  },
+  {
+    title: 'Отчетная формулировка',
+    text: 'В академическом отчете лучше писать не общие слова, а явно указывать объект проверки и тип альтернативы.',
+    formula: 'H_0:\\ \\text{данные согласуются с нормальным распределением}',
+  },
+]
+
 function Practice2_Screen2({ setContextNotes }) {
   useEffect(() => {
     setContextNotes(contextNotes)
@@ -159,6 +177,35 @@ function Practice2_Screen2({ setContextNotes }) {
               >
                 <h4 className="text-base font-semibold text-slate-900 dark:text-white">{item.title}</h4>
                 <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">{item.text}</p>
+                <MathBlock formula={item.formula} />
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Как писать гипотезу в отчете
+          </h3>
+          <MathText
+            as="p"
+            text="Хорошая гипотеза всегда отвечает на два вопроса: какой объект мы проверяем и что именно считаем отклонением от нормы. Ниже три академически корректных шаблона, которые понадобятся дальше в Практике 2."
+            className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-200"
+          />
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            {reportTemplates.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70"
+              >
+                <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                  {item.title}
+                </h4>
+                <MathText
+                  as="p"
+                  text={item.text}
+                  className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+                />
                 <MathBlock formula={item.formula} />
               </article>
             ))}

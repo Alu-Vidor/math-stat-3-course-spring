@@ -103,6 +103,51 @@ chi2_stat, p_value = stats.chisquare(f_obs=observed, f_exp=expected)
 print(f"Статистика Хи-квадрат: {chi2_stat:.2f}")
 print(f"P-value: {p_value:.4f}")`
 
+const expectedPipelineCode = `import numpy as np
+from scipy import stats
+
+# discrete_data — наблюдаемое количество событий
+values, observed = np.unique(discrete_data, return_counts=True)
+n = observed.sum()
+
+# 1. Оцениваем параметр модели
+lambda_hat = discrete_data.mean()
+
+# 2. Считаем теоретические вероятности
+probabilities = stats.poisson.pmf(values, mu=lambda_hat)
+
+# 3. Переводим вероятности в ожидаемые частоты
+expected = n * probabilities
+
+# 4. Если некоторые expected < 5, объединяем редкие категории
+# 5. После этого запускаем chisquare(observed, expected)`
+
+const modelChoiceCards = [
+  {
+    title: 'Пуассон',
+    text: 'Считаем редкие события за фиксированный интервал: клиенты за час, ошибки на странице, заявки за минуту.',
+  },
+  {
+    title: 'Биномиальное',
+    text: 'Считаем число успехов в заранее фиксированном числе испытаний: орлы в 10 бросках, дефекты в партии из 50 изделий.',
+  },
+]
+
+const documentationLinks = [
+  {
+    label: 'SciPy: chisquare',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chisquare.html',
+  },
+  {
+    label: 'SciPy: poisson',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.poisson.html',
+  },
+  {
+    label: 'SciPy: kstest',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kstest.html',
+  },
+]
+
 function Practice2_Screen6({ setContextNotes }) {
   useEffect(() => {
     setContextNotes(contextNotes)
@@ -311,6 +356,61 @@ function Practice2_Screen6({ setContextNotes }) {
         </section>
 
         <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Как получить Expected в реальной задаче
+          </h3>
+          <MathText
+            as="p"
+            text="В лабораторной работе ожидаемые частоты почти никогда не даны готовыми. Их нужно вывести из выбранной модели: сначала оценить параметр распределения, затем получить теоретические вероятности и только потом умножить их на объем выборки."
+            className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-200"
+          />
+          <div className="mt-4 grid gap-4 lg:grid-cols-4">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">Шаг 1</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">Выбираем модель и оцениваем её параметр по данным.</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">Шаг 2</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">Считаем вероятности для каждого допустимого значения.</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">Шаг 3</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">Умножаем вероятности на размер выборки и получаем `Expected`.</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">Шаг 4</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">Проверяем условие $E_i \\ge 5$ и при необходимости объединяем хвост.</p>
+            </div>
+          </div>
+          <div className="mt-5">
+            <CodeBlock code={expectedPipelineCode} language="python" title="Python: pipeline для Expected frequencies" />
+          </div>
+        </section>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Когда Пуассон, а когда биномиальное
+          </h3>
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            {modelChoiceCards.map((card) => (
+              <article
+                key={card.title}
+                className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-950/70"
+              >
+                <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                  {card.title}
+                </h4>
+                <MathText
+                  as="p"
+                  text={card.text}
+                  className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200"
+                />
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <div className="flex items-start gap-3">
             <Target size={20} className="mt-1 shrink-0 text-indigo-600 dark:text-indigo-300" />
             <div className="grid flex-1 gap-3 md:grid-cols-3">
@@ -330,6 +430,28 @@ function Practice2_Screen6({ setContextNotes }) {
         <KeyIdea title="Как читать результат?">
           {'Наш p-value равен 0.369, то есть около 37%. Это заметно больше стандартного порога $\\alpha = 0.05$. Значит, мы не отвергаем нулевую гипотезу: перекос между 5 единицами и 14 пятерками для 60 бросков еще выглядит как нормальная случайность, а не как улика против честного кубика.'}
         </KeyIdea>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Эти страницы пригодятся перед дискретной лабораторной: там есть параметры, ограничения и примеры вызова функций.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </section>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -54,6 +54,25 @@ const taskItems = [
   },
 ]
 
+const documentationLinks = [
+  {
+    label: 'scikit-learn: fetch_california_housing',
+    href: 'https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html',
+  },
+  {
+    label: 'SciPy: kstest',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kstest.html',
+  },
+  {
+    label: 'SciPy: jarque_bera',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.jarque_bera.html',
+  },
+  {
+    label: 'SciPy: cramervonmises',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.cramervonmises.html',
+  },
+]
+
 function Practice2_Screen7({ setContextNotes }) {
   useEffect(() => {
     setContextNotes(contextNotes)
@@ -94,6 +113,28 @@ function Practice2_Screen7({ setContextNotes }) {
           title="Финальный ориентир"
           text="Хороший отчет по лабораторной должен содержать не только `p-value`, но и логику сравнения двух гипотез: нормальность исходных доходов против логнормальности после логарифмирования."
         />
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Здесь собраны первоисточники для загрузки датасета и трех критериев согласия из задания.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </section>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

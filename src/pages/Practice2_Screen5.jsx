@@ -45,6 +45,21 @@ axes[1].set_title("QQ-plot: Скошенные данные")
 
 plt.show()`
 
+const labBridgeCode = `import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+
+# income_data — ваш реальный непрерывный признак
+stats.probplot(income_data, dist="norm", plot=plt)
+plt.title("QQ-plot: income_data")
+plt.show()
+
+# Если видна правая асимметрия, проверяем идею логнормальности
+log_income = np.log(income_data)
+stats.probplot(log_income, dist="norm", plot=plt)
+plt.title("QQ-plot: log(income_data)")
+plt.show()`
+
 const readingCards = [
   {
     icon: Eye,
@@ -63,6 +78,21 @@ const readingCards = [
     title: '3. Затем решение',
     text: 'Если отклонение систематическое, переходите к преобразованию данных или непараметрическим критериям.',
     tone: 'border-emerald-200 bg-emerald-50/80 dark:border-emerald-900/50 dark:bg-emerald-950/20',
+  },
+]
+
+const documentationLinks = [
+  {
+    label: 'SciPy: scipy.stats.probplot',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.probplot.html',
+  },
+  {
+    label: 'SciPy: overview of scipy.stats',
+    href: 'https://docs.scipy.org/doc/scipy/reference/stats.html',
+  },
+  {
+    label: 'Matplotlib: pyplot',
+    href: 'https://matplotlib.org/stable/api/pyplot_summary.html',
   },
 ]
 
@@ -200,6 +230,41 @@ function Practice2_Screen5({ setContextNotes }) {
           </div>
         </section>
 
+        <section className="rounded-[1.5rem] border border-indigo-200 bg-indigo-50/70 p-6 dark:border-indigo-900/50 dark:bg-indigo-950/20">
+          <h3 className="text-lg font-semibold tracking-tight text-indigo-900 dark:text-indigo-200">
+            Мост к лабораторной 2.1
+          </h3>
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 dark:border-slate-800 dark:bg-slate-900/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                1. Сырые данные
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                Если QQ-plot заметно выгнут вправо, гипотеза о нормальности исходного признака выглядит слабой.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 dark:border-slate-800 dark:bg-slate-900/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                2. Логарифмирование
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                Для положительных доходов естественный следующий шаг — проверить нормальность после `log`.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 dark:border-slate-800 dark:bg-slate-900/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                3. Формальный тест
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                Только после визуального шага имеет смысл запускать критерии согласия и сравнивать гипотезы.
+              </p>
+            </div>
+          </div>
+          <div className="mt-5">
+            <CodeBlock code={labBridgeCode} language="python" title="Python: QQ-plot как прелюдия к Лаб 2.1" />
+          </div>
+        </section>
+
         <section className="space-y-4">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
             Пишем код на SciPy
@@ -303,6 +368,28 @@ function Practice2_Screen5({ setContextNotes }) {
         <KeyIdea title="Нормальности нет. Что делать?">
           {'Если QQ-plot похож на правый график, есть два стандартных пути. Первый — попробовать преобразование данных, например логарифмирование, чтобы стянуть хвосты. Второй — отказаться от параметрики и перейти к непараметрическим критериям, например Манна–Уитни, который не требует нормальности.'}
         </KeyIdea>
+
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Здесь собраны первоисточники по построению QQ-plot и настройке графиков.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </section>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
