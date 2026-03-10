@@ -157,7 +157,7 @@ function Practice2_Screen6({ setContextNotes }) {
     <article className="space-y-6">
       <CourseHeader
         badge="Практика 2 -> КРИТЕРИИ В КОДЕ"
-        title="Критерий согласия Хи-квадрат ($\\chi^2$)"
+        title={String.raw`Критерий согласия Хи-квадрат ($\chi^2$)`}
         subtitle="Сравниваем реальность с нашими ожиданиями."
       />
 

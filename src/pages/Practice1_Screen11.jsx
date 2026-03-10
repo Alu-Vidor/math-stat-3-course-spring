@@ -132,9 +132,9 @@ function Practice1_Screen11({ setContextNotes }) {
 
         <Link
           to="/practice/2"
-          className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-indigo-600 px-6 py-4 text-base font-semibold text-white shadow-soft transition hover:from-emerald-400 hover:to-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="inline-flex min-h-16 items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-indigo-600 px-6 py-4 text-base font-semibold text-white shadow-soft transition hover:from-emerald-400 hover:to-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          <PartyPopper size={18} />
+          <PartyPopper size={20} />
           🎉 Завершить Практику 1 → Перейти к Практике 2
           <ArrowRight size={18} />
         </Link>
