@@ -64,6 +64,25 @@ const fileCheckCode = `print(students_csv.shape)
 print(students_csv.columns.tolist())
 print(students_csv.dtypes)`
 
+const documentationLinks = [
+  {
+    label: 'pandas: Series',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.Series.html',
+  },
+  {
+    label: 'pandas: DataFrame',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html',
+  },
+  {
+    label: 'pandas: read_csv',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html',
+  },
+  {
+    label: 'pandas: read_excel',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html',
+  },
+]
+
 function Practice1_Screen5({ setContextNotes }) {
   useEffect(() => {
     const timerId = window.setTimeout(() => {
@@ -250,6 +269,27 @@ function Practice1_Screen5({ setContextNotes }) {
           среднее. Сначала загрузите файл, проверьте структуру таблицы, убедитесь, что числовые
           колонки действительно числовые, и только потом переходите к статистике.
         </KeyIdea>
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Базовые страницы Pandas, которые стоит открыть перед первой лабораторной.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </section>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

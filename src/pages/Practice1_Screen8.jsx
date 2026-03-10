@@ -33,6 +33,21 @@ const checklistItems = [
   },
 ]
 
+const documentationLinks = [
+  {
+    label: 'Jupyter Notebook docs',
+    href: 'https://jupyter-notebook.readthedocs.io/en/stable/',
+  },
+  {
+    label: 'Google Colab',
+    href: 'https://colab.research.google.com/notebooks/basic_features_overview.ipynb',
+  },
+  {
+    label: 'Markdown guide',
+    href: 'https://www.markdownguide.org/basic-syntax/',
+  },
+]
+
 function InfoCard({ title, children }) {
   return (
     <section className="rounded-[1.75rem] border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-50 p-6 shadow-soft dark:border-amber-900/70 dark:from-amber-950/30 dark:via-slate-900 dark:to-orange-950/20">
@@ -149,6 +164,27 @@ function Practice1_Screen8({ setContextNotes }) {
               «Медианная зарплата составляет 45 000 руб., при этом средняя равна 60 000 руб. Сильная скошенность распределения вправо говорит о наличии небольшого числа аномально высоких зарплат».
             </p>
           </article>
+        </section>
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Полезная документация
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Короткий набор ссылок по среде, в которой оформляются все лабораторные Практики 1.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
         </section>
       </section>
 

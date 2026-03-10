@@ -64,6 +64,21 @@ const tCriticalByConfidence = {
 }
 const chartData = [{ x: sampleMean, y: 0.5 }]
 
+const documentationLinks = [
+  {
+    label: 'SciPy: t distribution',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.t.html',
+  },
+  {
+    label: 'SciPy: sem',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sem.html',
+  },
+  {
+    label: 'NumPy: mean',
+    href: 'https://numpy.org/doc/stable/reference/generated/numpy.mean.html',
+  },
+]
+
 function Practice1_Screen7({ setContextNotes }) {
   const [confidenceLevel, setConfidenceLevel] = useState(95)
 
@@ -323,6 +338,27 @@ function Practice1_Screen7({ setContextNotes }) {
           строить такие интервалы, то примерно 95% из них накроют истинное среднее генеральной
           совокупности.
         </KeyIdea>
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Эти страницы помогут сверить формулу, параметры и численную реализацию доверительного интервала.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </section>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

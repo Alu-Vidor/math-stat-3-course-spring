@@ -52,6 +52,29 @@ const taskItems = [
   },
 ]
 
+const documentationLinks = [
+  {
+    label: 'scikit-learn: fetch_california_housing',
+    href: 'https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html',
+  },
+  {
+    label: 'pandas: cut',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.cut.html',
+  },
+  {
+    label: 'pandas: value_counts',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.Series.value_counts.html',
+  },
+  {
+    label: 'SciPy: skew',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skew.html',
+  },
+  {
+    label: 'SciPy: kurtosis',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosis.html',
+  },
+]
+
 function DatasetCard() {
   return (
     <section className="rounded-[1.75rem] border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 shadow-soft dark:border-sky-900/70 dark:from-sky-950/30 dark:via-slate-900 dark:to-cyan-950/20">
@@ -182,6 +205,27 @@ function Practice1_Screen9({ setContextNotes }) {
                 правый хвост на гистограмме, положительная асимметрия и среднее значение выше медианы.
               </p>
             </div>
+          </div>
+        </section>
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Набор API для интервалов, частот и коэффициентов формы распределения в Лаб 1.1.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
         </section>
       </section>

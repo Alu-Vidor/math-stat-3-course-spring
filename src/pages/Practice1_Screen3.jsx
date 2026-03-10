@@ -6,6 +6,21 @@ import MathBlock from '../components/MathBlock'
 
 const scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
 
+const consequenceCards = [
+  {
+    title: 'Что ломается',
+    text: 'Среднее арифметическое перестает быть типичным значением группы и начинает отражать ошибочную строку.',
+  },
+  {
+    title: 'Что делать аналитически',
+    text: 'Нужно сравнить среднее с медианой, проверить максимум, построить график и найти источник выброса.',
+  },
+  {
+    title: 'Какой урок',
+    text: 'Число само по себе не гарантирует корректность. Важна структура данных и устойчивость метрики.',
+  },
+]
+
 function DataPill({ value, isAnomaly = false }) {
   return (
     <span
@@ -156,6 +171,18 @@ function Practice1_Screen3({ setContext, setContextNotes }) {
             величину значения, а на положение элемента в упорядоченном ряду.
           </KeyIdea>
         </div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        {consequenceCards.map((card) => (
+          <article
+            key={card.title}
+            className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900"
+          >
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">{card.title}</h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">{card.text}</p>
+          </article>
+        ))}
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

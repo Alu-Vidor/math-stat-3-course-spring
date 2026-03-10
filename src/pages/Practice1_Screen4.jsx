@@ -15,6 +15,21 @@ const contextNotes = [
 
 const sortedScores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
 
+const decisionCards = [
+  {
+    title: 'Среднее лучше',
+    text: 'Если распределение близко к симметричному, нет тяжелых хвостов и выбросы отсутствуют или объяснимы.',
+  },
+  {
+    title: 'Медиана лучше',
+    text: 'Если данные скошены, содержат редкие экстремальные значения или описывают типичного представителя группы.',
+  },
+  {
+    title: 'Лучший академический ход',
+    text: 'Почти всегда полезно сообщать обе оценки: среднее как баланс значений и медиану как робастный центр.',
+  },
+]
+
 function Practice1_Screen4({ setContextNotes }) {
   useEffect(() => {
     const timerId = window.setTimeout(() => {
@@ -93,6 +108,25 @@ function Practice1_Screen4({ setContextNotes }) {
           <br />
           Медиана - <strong>робастна</strong>.
         </KeyIdea>
+      </section>
+
+      <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+        <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+          Когда какую оценку брать
+        </h3>
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          {decisionCards.map((card) => (
+            <article
+              key={card.title}
+              className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70"
+            >
+              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                {card.title}
+              </h4>
+              <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">{card.text}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

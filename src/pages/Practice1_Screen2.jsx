@@ -59,6 +59,29 @@ const scaleCards = [
   },
 ]
 
+const scaleRules = [
+  {
+    scale: 'Номинативная',
+    ok: 'частоты, доли, мода',
+    avoid: 'среднее, дисперсия, корреляция Пирсона',
+  },
+  {
+    scale: 'Порядковая',
+    ok: 'медиана, квартили, ранги',
+    avoid: 'арифметика как для количественных данных',
+  },
+  {
+    scale: 'Интервальная',
+    ok: 'разности, среднее, дисперсия',
+    avoid: 'отношения вида “в 2 раза больше”',
+  },
+  {
+    scale: 'Отношений',
+    ok: 'весь базовый аппарат количественной статистики',
+    avoid: 'механическое игнорирование смысла данных',
+  },
+]
+
 function Practice1_Screen2({ setContextNotes }) {
   useEffect(() => {
     const timerId = window.setTimeout(() => {
@@ -132,6 +155,30 @@ function Practice1_Screen2({ setContextNotes }) {
         количественной шкалы (например, корреляцию Пирсона) к номинативным данным, Python честно
         все посчитает и выдаст число, но это число будет статистическим мусором.
       </IdeaCard>
+
+      <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+        <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+          Шкала - допустимые методы
+        </h3>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {scaleRules.map((rule) => (
+            <article
+              key={rule.scale}
+              className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/70"
+            >
+              <h4 className="text-sm font-semibold uppercase tracking-[0.08em] text-slate-900 dark:text-white">
+                {rule.scale}
+              </h4>
+              <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                <span className="font-semibold">Можно:</span> {rule.ok}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                <span className="font-semibold">Нельзя или опасно:</span> {rule.avoid}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Link

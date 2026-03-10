@@ -55,6 +55,21 @@ const taskItems = [
   },
 ]
 
+const documentationLinks = [
+  {
+    label: 'Seaborn: load_dataset',
+    href: 'https://seaborn.pydata.org/generated/seaborn.load_dataset.html',
+  },
+  {
+    label: 'pandas: CategoricalDtype',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.CategoricalDtype.html',
+  },
+  {
+    label: 'pandas: rank',
+    href: 'https://pandas.pydata.org/docs/reference/api/pandas.Series.rank.html',
+  },
+]
+
 function Practice1_Screen11({ setContextNotes }) {
   useEffect(() => {
     setContextNotes(contextNotes)
@@ -84,6 +99,27 @@ function Practice1_Screen11({ setContextNotes }) {
         />
 
         <TaskBlock title="Что необходимо сделать в Jupyter Notebook:" items={taskItems} />
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Основные API для ранговой шкалы, категориального порядка и связанных рангов в Лаб 1.3.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </section>
       </section>
 
       <nav className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

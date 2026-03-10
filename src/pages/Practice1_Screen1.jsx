@@ -4,6 +4,20 @@ import CourseHeader from '../components/CourseHeader'
 import IdeaCard from '../components/IdeaCard'
 import RecapBlock from '../components/RecapBlock'
 
+const roadmapItems = [
+  'сначала определяем тип признака и допустимые операции;',
+  'затем ищем центр, разброс и возможные аномалии;',
+  'после этого строим графики и проверяем форму распределения;',
+  'только потом пишем аналитический вывод для отчета.',
+]
+
+const outcomes = [
+  'отличать среднее от медианы не по определению, а по поведению на реальных данных;',
+  'читать гистограмму и ECDF как инструменты анализа формы распределения;',
+  'загружать данные в Pandas и быстро проверять качество таблицы;',
+  'оформлять лабораторную как воспроизводимый аналитический ноутбук.',
+]
+
 const contextNotes = [
   {
     title: 'Зачем нам Python и Pandas?',
@@ -78,6 +92,38 @@ function Practice1_Screen1({ setContextNotes }) {
           </p>
         </div>
       </IdeaCard>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Логика практики
+          </h3>
+          <ol className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            {roadmapItems.map((item, index) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white">
+                  {index + 1}
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="rounded-[1.5rem] border border-indigo-200 bg-indigo-50/70 p-6 shadow-soft dark:border-indigo-900/50 dark:bg-indigo-950/20">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Что должно получиться к концу
+          </h3>
+          <ul className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            {outcomes.map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-indigo-500 dark:bg-indigo-300" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </section>
 
       <div className="flex justify-end">
         <Link
