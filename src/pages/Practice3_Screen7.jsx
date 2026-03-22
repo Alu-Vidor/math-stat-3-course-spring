@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import CourseHeader from '../components/CourseHeader'
+import HypothesisFlow from '../components/HypothesisFlow'
 import KeyIdea from '../components/KeyIdea'
 import ScreenNavigation from '../components/ScreenNavigation'
 import TaskBlock from '../components/TaskBlock'
@@ -79,6 +80,19 @@ function Practice3_Screen7({ setContextNotes }) {
       <section className="content-block space-y-6">
         <TaskBlock title="Перед запуском ноутбука проверьте себя по этим пяти шагам:" items={checklistItems} />
 
+        <section className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Логика сильной лабораторной работы
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Даже когда отчёт большой, его внутренний каркас остаётся простым: гипотеза, статистика,
+            решение и содержательная интерпретация.
+          </p>
+          <div className="mt-5">
+            <HypothesisFlow />
+          </div>
+        </section>
+
         <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
             Минимальная структура отчета
@@ -100,6 +114,36 @@ function Practice3_Screen7({ setContextNotes }) {
           гипотезы к проверке и затем к выводу, лабораторная читается как законченный статистический
           разбор.
         </KeyIdea>
+
+        <section className="grid gap-4 md:grid-cols-3">
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Введение
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Кратко описан признак, указан источник данных и объяснено, почему выбран именно этот
+              закон распределения.
+            </p>
+          </article>
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Основная часть
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Приведены графики, параметры модели, статистики критериев и промежуточные пояснения
+              без резких скачков между шагами.
+            </p>
+          </article>
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Заключение
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Вывод сформулирован статистически корректно: говорится об отсутствии или наличии
+              оснований отвергнуть гипотезу на уровне значимости.
+            </p>
+          </article>
+        </section>
       </section>
 
       <ScreenNavigation

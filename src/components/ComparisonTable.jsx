@@ -1,3 +1,5 @@
+import MathText from './MathText'
+
 function ComparisonTable({ columns = [], rows = [] }) {
   return (
     <div className="overflow-x-auto rounded-[1.5rem] border border-slate-200 bg-white shadow-soft dark:border-slate-700 dark:bg-slate-900">
@@ -10,7 +12,7 @@ function ComparisonTable({ columns = [], rows = [] }) {
                 key={column}
                 className="px-4 py-3 text-center font-semibold text-slate-900 dark:text-white"
               >
-                {column}
+                <MathText text={column} />
               </th>
             ))}
           </tr>
@@ -23,14 +25,14 @@ function ComparisonTable({ columns = [], rows = [] }) {
               className={row.highlight ? 'bg-amber-50/80 dark:bg-amber-950/20' : 'bg-white dark:bg-slate-900'}
             >
               <th className="border-t border-slate-200 px-4 py-3 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-white">
-                {row.label}
+                <MathText text={row.label} />
               </th>
               {row.values.map((value, index) => (
                 <td
                   key={`${row.label}-${columns[index] ?? index}`}
                   className="border-t border-slate-200 px-4 py-3 text-center dark:border-slate-700"
                 >
-                  {value}
+                  <MathText text={String(value)} />
                 </td>
               ))}
             </tr>

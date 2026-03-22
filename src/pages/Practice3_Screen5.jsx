@@ -4,12 +4,14 @@ import CodeBlock from '../components/CodeBlock'
 import CourseHeader from '../components/CourseHeader'
 import DatasetCard from '../components/DatasetCard'
 import KeyIdea from '../components/KeyIdea'
+import PlotViewer from '../components/PlotViewer'
+import QQPlotChart from '../components/QQPlotChart'
 import ScreenNavigation from '../components/ScreenNavigation'
 
 const contextNotes = [
   {
     title: 'Колмогоров в этой практике',
-    text: 'Для критерия Колмогорова в лабораторной 2.3 нужно брать значения математического ожидания и генерального СКО из ЛР 3, а не просто подставлять текущие выборочные оценки по умолчанию.',
+    text: 'Для критерия Колмогорова в лабораторной 2.3 следует использовать фиксированные параметры нормальной модели: $\\mu = 28.6395$ и $\\sigma = 12.5856$.',
   },
   {
     title: 'Пирсон и непрерывные данные',
@@ -37,8 +39,9 @@ cvm_normal = stats.cramervonmises(x, 'norm', args=normal_args)
 cvm_uniform = stats.cramervonmises(x, 'uniform', args=uniform_args)
 cvm_lognorm = stats.cramervonmises(x, 'lognorm', args=lognorm_args)
 
-# Колмогоров: параметры берем по условию задачи
-ks_normal = stats.kstest(x, 'norm', args=(mu_lr3, sigma_lr3))
+# Колмогоров: параметры задаются условием задачи
+mu0, sigma0 = 28.6395, 12.5856
+ks_normal = stats.kstest(x, 'norm', args=(mu0, sigma0))
 
 # Jarque-Bera как отдельная проверка нормальности
 jb_stat, jb_p = stats.jarque_bera(x)`
@@ -121,6 +124,22 @@ function Practice3_Screen5({ setContextNotes }) {
           ))}
         </section>
 
+        <section className="grid gap-4 xl:grid-cols-2">
+          <PlotViewer
+            title="QQ-plot: почти нормальная ситуация"
+            caption="Когда точки располагаются вдоль диагонали, нормальная модель выглядит устойчивым кандидатом для дальнейшей формальной проверки."
+          >
+            <QQPlotChart variant="normal" />
+          </PlotViewer>
+
+          <PlotViewer
+            title="QQ-plot: асимметричный признак"
+            caption="Систематический изгиб в правом хвосте предупреждает, что для признака стоит проверить логнормальность или другую асимметричную модель."
+          >
+            <QQPlotChart variant="skewed" />
+          </PlotViewer>
+        </section>
+
         <section className="space-y-4">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
             Отдельно про критерий Пирсона
@@ -140,6 +159,35 @@ function Practice3_Screen5({ setContextNotes }) {
             запуска тестов.
           </p>
         </AlertBox>
+
+        <section className="grid gap-4 md:grid-cols-3">
+          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              До тестов
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Гистограмма, QQ-plot, базовые характеристики формы и ограничения области значений.
+            </p>
+          </article>
+          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Во время тестов
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Единая таблица параметров, статистик и `p-value`, чтобы видеть согласованность
+              разных критериев.
+            </p>
+          </article>
+          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              После тестов
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Статистическое решение следует связать с содержательным смыслом признака и формой
+              распределения.
+            </p>
+          </article>
+        </section>
 
         <KeyIdea title="Правильный результат — это не просто p-value">
           Сильное решение по непрерывному признаку обычно выглядит так: гипотеза выдвинута по

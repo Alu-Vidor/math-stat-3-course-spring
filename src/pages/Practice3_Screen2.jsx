@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import CourseHeader from '../components/CourseHeader'
 import IdeaCard from '../components/IdeaCard'
+import QQPatternGallery from '../components/QQPatternGallery'
 import ScreenNavigation from '../components/ScreenNavigation'
 
 const contextNotes = [
@@ -98,6 +99,20 @@ function Practice3_Screen2({ setContextNotes }) {
           по типу признака и по механике генерации данных.
         </IdeaCard>
 
+        <section className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            QQ-plot как быстрый аргумент до запуска тестов
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Если точки лежат близко к диагонали, нормальная гипотеза выглядит правдоподобнее.
+            Систематический изгиб вверх в правом хвосте заставляет проверить логнормальность или
+            другую асимметричную модель.
+          </p>
+          <div className="mt-5">
+            <QQPatternGallery />
+          </div>
+        </section>
+
         <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
             Алгоритм выдвижения гипотезы
@@ -128,6 +143,40 @@ function Practice3_Screen2({ setContextNotes }) {
               </p>
             </article>
           ))}
+        </section>
+
+        <section className="rounded-[1.5rem] border border-indigo-200 bg-indigo-50/70 p-6 shadow-soft dark:border-indigo-900/50 dark:bg-indigo-950/20">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Что особенно ценится в академическом отчёте
+          </h3>
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <article className="rounded-2xl border border-white/70 bg-white/90 p-4 dark:border-slate-700 dark:bg-slate-950/80">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                Аргументация
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                Гипотеза опирается на графики, характеристики формы и предметный смысл признака.
+              </p>
+            </article>
+            <article className="rounded-2xl border border-white/70 bg-white/90 p-4 dark:border-slate-700 dark:bg-slate-950/80">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                Сдержанность
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                Формулировка звучит как статистическое решение, а не как абсолютное доказательство
+                истинности модели.
+              </p>
+            </article>
+            <article className="rounded-2xl border border-white/70 bg-white/90 p-4 dark:border-slate-700 dark:bg-slate-950/80">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                Целостность
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                Графическая диагностика и критерии согласия не противоречат друг другу, а работают
+                как единая доказательная линия.
+              </p>
+            </article>
+          </div>
         </section>
       </section>
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import AlertBox from '../components/AlertBox'
 import ComparisonTable from '../components/ComparisonTable'
+import CriteriaExplorer from '../components/CriteriaExplorer'
 import CourseHeader from '../components/CourseHeader'
 import KeyIdea from '../components/KeyIdea'
 import ScreenNavigation from '../components/ScreenNavigation'
@@ -12,7 +13,7 @@ const contextNotes = [
   },
   {
     title: 'Колмогоров и известные параметры',
-    text: 'В классической формулировке критерий Колмогорова требует полностью известной теоретической функции распределения. Поэтому в ваших заданиях для него прямо указано брать математическое ожидание и генеральное СКО из ЛР 3.',
+    text: 'В классической формулировке критерий Колмогорова требует полностью известной теоретической функции распределения. Для признака `HouseAge` в лабораторной 2.3 используются параметры $\\mu = 28.6395$ и $\\sigma = 12.5856$.',
   },
 ]
 
@@ -82,6 +83,8 @@ function Practice3_Screen4({ setContextNotes }) {
           </div>
         </section>
 
+        <CriteriaExplorer />
+
         <section className="grid gap-4 lg:grid-cols-3">
           {whySeveralTests.map((item) => (
             <article
@@ -110,6 +113,27 @@ function Practice3_Screen4({ setContextNotes }) {
           закона и результаты нескольких критериев. Именно вместе они дают убедительный вывод о виде
           распределения.
         </KeyIdea>
+
+        <section className="grid gap-4 md:grid-cols-2">
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+              Что показывает Пирсон
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Он сопоставляет наблюдаемые и ожидаемые частоты по корзинам. Это делает его очень
+              понятным для отчёта, но одновременно требует аккуратной группировки данных.
+            </p>
+          </article>
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+              Что показывает Колмогоров
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Он фиксирует наибольший разрыв между эмпирической и теоретической функциями
+              распределения, поэтому особенно удобен для геометрической интерпретации на графике.
+            </p>
+          </article>
+        </section>
       </section>
 
       <ScreenNavigation

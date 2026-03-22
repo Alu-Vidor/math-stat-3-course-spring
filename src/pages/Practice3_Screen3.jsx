@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import AlertBox from '../components/AlertBox'
 import ComparisonTable from '../components/ComparisonTable'
 import CourseHeader from '../components/CourseHeader'
+import DistributionFamilyExplorer from '../components/DistributionFamilyExplorer'
 import ScreenNavigation from '../components/ScreenNavigation'
 
 const contextNotes = [
@@ -56,7 +57,13 @@ const comparisonRows = [
   },
   {
     label: 'Быстрая подсказка',
-    values: ['as≈0, ek≈0', 'Поддержка [a,b]', 'log(X) ближе к нормали', 'Есть фиксированное n', 'D≈x̄'],
+    values: [
+      '$as \\approx 0,\\ ek \\approx 0$',
+      'Поддержка $[a,b]$',
+      '$\\log(X)$ ближе к нормали',
+      'Есть фиксированное $n$',
+      '$D \\approx \\bar{x}$',
+    ],
   },
   {
     label: 'Типичный пример',
@@ -96,6 +103,8 @@ function Practice3_Screen3({ setContextNotes }) {
           ))}
         </section>
 
+        <DistributionFamilyExplorer />
+
         <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
             Быстрое сравнение законов
@@ -117,6 +126,36 @@ function Practice3_Screen3({ setContextNotes }) {
             распределение. Если считаем поток событий за интервал — чаще уместен Пуассон.
           </p>
         </AlertBox>
+
+        <section className="grid gap-4 md:grid-cols-3">
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Непрерывный признак
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Сначала проверяем тип поддержки: вся числовая ось, ограниченный интервал или только
+              положительные значения.
+            </p>
+          </article>
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Форма распределения
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Затем анализируем симметрию, правый хвост, компактность распределения и поведение
+              после логарифмирования.
+            </p>
+          </article>
+          <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+              Механизм генерации
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+              Для дискретных данных решающим становится вопрос, что именно считается: успехи в
+              серии испытаний или поток событий.
+            </p>
+          </article>
+        </section>
       </section>
 
       <ScreenNavigation
