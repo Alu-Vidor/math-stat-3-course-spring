@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import Layout from './components/Layout'
+import { PythonExecutionProvider } from './components/PythonExecutionProvider'
 import PracticePage from './pages/PracticePage'
 import { courseData } from './data/courseData'
 
@@ -29,16 +30,18 @@ function AppShell() {
   }
 
   return (
-    <Layout practices={courseData} currentPracticeId={practice.id}>
-      {({ setContext, setContextNotes }) => (
-        <PracticePage
-          practiceNumber={practiceNumber}
-          screenNumber={screenNumber}
-          setContext={setContext}
-          setContextNotes={setContextNotes}
-        />
-      )}
-    </Layout>
+    <PythonExecutionProvider screenKey={location.pathname}>
+      <Layout practices={courseData} currentPracticeId={practice.id}>
+        {({ setContext, setContextNotes }) => (
+          <PracticePage
+            practiceNumber={practiceNumber}
+            screenNumber={screenNumber}
+            setContext={setContext}
+            setContextNotes={setContextNotes}
+          />
+        )}
+      </Layout>
+    </PythonExecutionProvider>
   )
 }
 

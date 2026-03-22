@@ -26,7 +26,12 @@ result = {
     "error": None,
 }
 
-namespace = {"__name__": "__main__"}
+registry = globals().setdefault("__course_sessions__", {})
+namespace = registry.get(__course_session_key__)
+
+if namespace is None:
+    namespace = {"__name__": "__main__"}
+    registry[__course_session_key__] = namespace
 
 try:
     try:
@@ -63,6 +68,17 @@ finally:
         pass
 
 json.dumps(result)
+`
+
+const RESET_SESSION_SCRIPT = `
+registry = globals().setdefault("__course_sessions__", {})
+registry.pop(__course_session_key__, None)
+
+try:
+    import matplotlib.pyplot as plt
+    plt.close("all")
+except Exception:
+    pass
 `
 
 let pyodidePromise = null
@@ -149,7 +165,7 @@ async function preparePackages(pyodide, code, onStatus) {
   }
 }
 
-async function executePython(code, onStatus) {
+async function executePythonInSession(code, sessionKey, onStatus) {
   const pyodide = await loadPyodideRuntime(onStatus)
   await preparePackages(pyodide, code, onStatus)
 
@@ -169,6 +185,7 @@ async function executePython(code, onStatus) {
   })
 
   pyodide.globals.set('__course_code__', code)
+  pyodide.globals.set('__course_session_key__', sessionKey)
 
   try {
     onStatus('Выполняем код...')
@@ -193,16 +210,38 @@ async function executePython(code, onStatus) {
     }
   } finally {
     pyodide.globals.delete('__course_code__')
+    pyodide.globals.delete('__course_session_key__')
     setDefaultStreams(pyodide)
   }
 }
 
-export function runPythonCode(code, { onStatus = () => {} } = {}) {
+async function clearPythonSession(sessionKey, onStatus) {
+  const pyodide = await loadPyodideRuntime(onStatus)
+
+  pyodide.globals.set('__course_session_key__', sessionKey)
+
+  try {
+    onStatus('Сбрасываем общую среду...')
+    await pyodide.runPythonAsync(RESET_SESSION_SCRIPT)
+  } finally {
+    pyodide.globals.delete('__course_session_key__')
+  }
+}
+
+function schedulePythonTask(task) {
   const scheduledExecution = executionQueue
     .catch(() => undefined)
-    .then(() => executePython(code, onStatus))
+    .then(() => task())
 
   executionQueue = scheduledExecution.catch(() => undefined)
 
   return scheduledExecution
+}
+
+export function runPythonCode(code, { onStatus = () => {}, sessionKey = 'default' } = {}) {
+  return schedulePythonTask(() => executePythonInSession(code, sessionKey, onStatus))
+}
+
+export function resetPythonSession(sessionKey, { onStatus = () => {} } = {}) {
+  return schedulePythonTask(() => clearPythonSession(sessionKey, onStatus))
 }
