@@ -38,12 +38,18 @@ summary = {
     'share_of_1': (passengers == 1).mean(),
 }`
 
-const modelCode = `from scipy import stats
+const modelCode = `import seaborn as sns
+from scipy import stats
 import numpy as np
+
+taxis = sns.load_dataset('taxis')
+passengers = taxis['passengers'].dropna().to_numpy()
+values, observed = np.unique(passengers, return_counts=True)
 
 def poisson_expected(values, sample):
     lam = sample.mean()
     probs = stats.poisson.pmf(values, mu=lam)
+    probs = probs / probs.sum()
     return sample.size * probs
 
 def capacity_benchmark(values, sample, seats=6):
@@ -51,22 +57,40 @@ def capacity_benchmark(values, sample, seats=6):
     # а ограниченный сверху benchmark для сравнения с Пуассоном.
     p_hat = sample.mean() / seats
     probs = stats.binom.pmf(values, n=seats, p=p_hat)
+    probs = probs / probs.sum()
     return sample.size * probs
 
 expected_poisson = poisson_expected(values, passengers)
 expected_capacity = capacity_benchmark(values, passengers, seats=6)
 
 chi2_poisson = stats.chisquare(f_obs=observed, f_exp=expected_poisson)
-chi2_capacity = stats.chisquare(f_obs=observed, f_exp=expected_capacity)`
+chi2_capacity = stats.chisquare(f_obs=observed, f_exp=expected_capacity)
 
-const groupingCode = `import numpy as np
+print('poisson ->', chi2_poisson)
+print('capacity ->', chi2_capacity)`
+
+const groupingCode = `import seaborn as sns
+import numpy as np
+from scipy import stats
+
+taxis = sns.load_dataset('taxis')
+passengers = taxis['passengers'].dropna().to_numpy()
+values, observed = np.unique(passengers, return_counts=True)
+
+lam = passengers.mean()
+expected_poisson = passengers.size * stats.poisson.pmf(values, mu=lam)
+expected_poisson = passengers.size * (expected_poisson / expected_poisson.sum())
 
 mask = expected_poisson >= 5
 
 observed_grouped = np.append(observed[mask], observed[~mask].sum())
 expected_grouped = np.append(expected_poisson[mask], expected_poisson[~mask].sum())
 
-chi2_grouped = stats.chisquare(f_obs=observed_grouped, f_exp=expected_grouped)`
+chi2_grouped = stats.chisquare(f_obs=observed_grouped, f_exp=expected_grouped)
+
+print('observed_grouped =', observed_grouped)
+print('expected_grouped =', np.round(expected_grouped, 2))
+print('chi2_grouped =', chi2_grouped)`
 
 const decisionItems = [
   {

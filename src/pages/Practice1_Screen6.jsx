@@ -18,15 +18,28 @@ import KeyIdea from '../components/KeyIdea'
 import MathBlock from '../components/MathBlock'
 import PlotViewer from '../components/PlotViewer'
 
-const histogramCode = `import seaborn as sns
+const histogramCode = `import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
+
+df = pd.DataFrame({
+    'salary': [28, 35, 41, 49, 56, 63, 71, 78, 86, 94, 108, 122, 67, 74, 82, 59, 61, 73, 88, 97]
+})
 
 # Строим гистограмму с 10 корзинами
 sns.histplot(df['salary'], bins=10, kde=False)
 plt.title("Гистограмма зарплат")
 plt.show()`
 
-const ecdfCode = `# Строим ECDF
+const ecdfCode = `import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.DataFrame({
+    'salary': [28, 35, 41, 49, 56, 63, 71, 78, 86, 94, 108, 122, 67, 74, 82, 59, 61, 73, 88, 97]
+})
+
+# Строим ECDF
 sns.ecdfplot(data=df['salary'])
 plt.title("Эмпирическая функция распределения (ECDF)")
 plt.show()`

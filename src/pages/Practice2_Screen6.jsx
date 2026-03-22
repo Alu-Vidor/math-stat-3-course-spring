@@ -106,6 +106,8 @@ print(f"P-value: {p_value:.4f}")`
 const expectedPipelineCode = `import numpy as np
 from scipy import stats
 
+discrete_data = np.array([0, 1, 1, 2, 0, 3, 1, 2, 4, 1, 0, 2, 1, 3, 2, 1, 0, 1, 2, 5])
+
 # discrete_data — наблюдаемое количество событий
 values, observed = np.unique(discrete_data, return_counts=True)
 n = observed.sum()
@@ -118,6 +120,10 @@ probabilities = stats.poisson.pmf(values, mu=lambda_hat)
 
 # 3. Переводим вероятности в ожидаемые частоты
 expected = n * probabilities
+
+print("values =", values)
+print("observed =", observed)
+print("expected =", np.round(expected, 2))
 
 # 4. Если некоторые expected < 5, объединяем редкие категории
 # 5. После этого запускаем chisquare(observed, expected)`

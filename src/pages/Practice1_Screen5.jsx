@@ -29,22 +29,44 @@ scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
 df_scores = pd.Series(scores)
 print(df_scores.values)`
 
-const metricsCode = `mean_score = df_scores.mean()
+const metricsCode = `import pandas as pd
+
+scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
+df_scores = pd.Series(scores)
+
+mean_score = df_scores.mean()
 median_score = df_scores.median()
 
 print(f"Среднее арифметическое: {mean_score}")
 print(f"Медиана: {median_score}")`
 
-const describeCode = `print(df_scores.describe())`
+const describeCode = `import pandas as pd
 
-const dataframeCode = `df = pd.DataFrame({
+scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
+df_scores = pd.Series(scores)
+
+print(df_scores.describe())`
+
+const dataframeCode = `import pandas as pd
+
+scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
+
+df = pd.DataFrame({
     "student_id": range(1, 11),
     "score": scores,
 })
 
 print(df.head())`
 
-const outlierCode = `print(df.sort_values("score", ascending=False).head(3))
+const outlierCode = `import pandas as pd
+
+scores = [65, 70, 72, 75, 78, 80, 82, 85, 88, 1000]
+df = pd.DataFrame({
+    "student_id": range(1, 11),
+    "score": scores,
+})
+
+print(df.sort_values("score", ascending=False).head(3))
 print()
 print(df[df["score"] > 100])`
 
@@ -210,7 +232,7 @@ function Practice1_Screen5({ setContextNotes }) {
             и
             <code className="mx-1 rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">read_excel()</code>.
           </p>
-          <CodeBlock code={importFilesCode} language="python" title="Python" />
+          <CodeBlock code={importFilesCode} language="python" title="Python" runnable={false} />
           <TerminalOutput
             lines={[
               '   student_id  score',
@@ -238,7 +260,7 @@ function Practice1_Screen5({ setContextNotes }) {
             заметить типичные проблемы: лишний индекс, неправильный разделитель в CSV, текст вместо
             чисел или пустые значения в критичных столбцах.
           </p>
-          <CodeBlock code={fileCheckCode} language="python" title="Python" />
+          <CodeBlock code={fileCheckCode} language="python" title="Python" runnable={false} />
           <TerminalOutput
             lines={[
               '(10, 2)',

@@ -44,7 +44,8 @@ def quick_summary(x):
         'max': x.max(),
     }`
 
-const candidateCode = `from scipy import stats
+const candidateCode = `import seaborn as sns
+from scipy import stats
 import numpy as np
 
 def evaluate_continuous(x, candidate):
@@ -63,11 +64,26 @@ def evaluate_continuous(x, candidate):
 
     raise ValueError('Unknown candidate')
 
+penguins = sns.load_dataset('penguins')
+mpg_df = sns.load_dataset('mpg')
+diamonds = sns.load_dataset('diamonds')
+
+continuous_features = {
+    'bill_length_mm': penguins['bill_length_mm'].dropna().to_numpy(),
+    'mpg': mpg_df['mpg'].dropna().to_numpy(),
+    'price': diamonds['price'].dropna().to_numpy(),
+}
+
 bill_length = continuous_features['bill_length_mm']
 mpg_values = continuous_features['mpg']
-diamond_price = continuous_features['price']`
+diamond_price = continuous_features['price']
 
-const pearsonCode = `import numpy as np
+print('bill_length_mm ->', evaluate_continuous(bill_length, 'normal'))
+print('mpg ->', evaluate_continuous(mpg_values, 'normal'))
+print('price ->', evaluate_continuous(diamond_price, 'lognormal'))`
+
+const pearsonCode = `import seaborn as sns
+import numpy as np
 from scipy import stats
 
 def pearson_for_continuous(data, dist_name, dist_args, bins='sturges'):
@@ -79,8 +95,11 @@ def pearson_for_continuous(data, dist_name, dist_args, bins='sturges'):
     mask = expected > 0
     return stats.chisquare(f_obs=observed[mask], f_exp=expected[mask])
 
-# пример:
-# pearson_for_continuous(diamond_price, 'lognorm', lognorm_args)`
+diamonds = sns.load_dataset('diamonds')
+diamond_price = diamonds['price'].dropna().to_numpy()
+shape, loc, scale = stats.lognorm.fit(diamond_price, floc=0)
+
+print(pearson_for_continuous(diamond_price, 'lognorm', (shape, loc, scale)))`
 
 const workflowItems = [
   {

@@ -49,7 +49,9 @@ const labBridgeCode = `import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 
-# income_data — ваш реальный непрерывный признак
+# Пример правоскошенного признака "доход"
+income_data = np.random.lognormal(mean=10, sigma=0.45, size=500)
+
 stats.probplot(income_data, dist="norm", plot=plt)
 plt.title("QQ-plot: income_data")
 plt.show()
