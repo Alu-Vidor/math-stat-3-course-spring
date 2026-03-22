@@ -9,7 +9,7 @@ import TaskBlock from '../components/TaskBlock'
 const contextNotes = [
   {
     title: 'Сначала данные, потом критерий',
-    text: 'На этом экране мы не выбираем тесты. Сначала сужаем круг разумных законов распределения по самим данным и смыслу признака.',
+    text: 'Выбор критерия начинается только после того, как по данным и смыслу признака выделены разумные кандидаты на закон распределения.',
   },
   {
     title: 'Нужны 1-2 кандидата, а не десять',
@@ -113,7 +113,7 @@ function Practice3_Screen2({ setContextNotes }) {
 
         <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-            Реальные сигналы в данных без спойлеров к ЛР
+            Реальные сигналы в данных
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
             Ниже другие реальные датасеты: измерения клюва пингвинов, экономичность автомобилей, цены бриллиантов и
