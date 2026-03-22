@@ -1,73 +1,145 @@
 import { useEffect } from 'react'
 import AlertBox from '../components/AlertBox'
 import CodeBlock from '../components/CodeBlock'
+import ComparisonTable from '../components/ComparisonTable'
 import CourseHeader from '../components/CourseHeader'
 import DatasetCard from '../components/DatasetCard'
 import KeyIdea from '../components/KeyIdea'
-import PlotViewer from '../components/PlotViewer'
-import QQPlotChart from '../components/QQPlotChart'
 import ScreenNavigation from '../components/ScreenNavigation'
+import TaskBlock from '../components/TaskBlock'
 
 const contextNotes = [
   {
-    title: 'Колмогоров в этой практике',
-    text: 'Для критерия Колмогорова в лабораторной 2.3 следует использовать фиксированные параметры нормальной модели: $\\mu = 28.6395$ и $\\sigma = 12.5856$.',
+    title: 'Здесь уже нет этапа угадывания',
+    text: 'На кодовом экране для непрерывных признаков мы не повторяем заново теорию QQ-plot. Предполагается, что кандидат уже выбран и теперь его нужно аккуратно проверить.',
   },
   {
-    title: 'Пирсон и непрерывные данные',
-    text: 'Для непрерывного признака критерий Пирсона всегда требует разбиения на интервалы и расчета ожидаемых частот по предполагаемому закону. Это не “одна строка SciPy”, а отдельный этап подготовки.',
+    title: 'Другие реальные данные',
+    text: 'Здесь используются не признаки из лабораторных, а другие реальные наборы: `penguins`, `mpg` и `diamonds`.',
   },
 ]
 
-const notebookCode = `import numpy as np
+const datasetCode = `import seaborn as sns
 from scipy import stats
+import numpy as np
 
-x = task_data.dropna().to_numpy()
-n = x.size
+penguins = sns.load_dataset('penguins')
+mpg_df = sns.load_dataset('mpg')
+diamonds = sns.load_dataset('diamonds')
 
-x_bar = x.mean()
-s = x.std(ddof=1)
+continuous_features = {
+    'bill_length_mm': penguins['bill_length_mm'].dropna().to_numpy(),
+    'mpg': mpg_df['mpg'].dropna().to_numpy(),
+    'price': diamonds['price'].dropna().to_numpy(),
+}
 
-# Кандидаты для непрерывного признака
-normal_args = (x_bar, s)
-uniform_args = (x.min(), x.max() - x.min())
-shape, loc, scale = stats.lognorm.fit(x, floc=0)
-lognorm_args = (shape, loc, scale)
+def quick_summary(x):
+    return {
+        'n': x.size,
+        'mean': x.mean(),
+        'median': np.median(x),
+        'std': x.std(ddof=1),
+        'skew': stats.skew(x, bias=False),
+        'min': x.min(),
+        'max': x.max(),
+    }`
 
-# Омега-квадрат Крамера-Мизеса-Смирнова
-cvm_normal = stats.cramervonmises(x, 'norm', args=normal_args)
-cvm_uniform = stats.cramervonmises(x, 'uniform', args=uniform_args)
-cvm_lognorm = stats.cramervonmises(x, 'lognorm', args=lognorm_args)
+const candidateCode = `from scipy import stats
+import numpy as np
 
-# Колмогоров: параметры задаются условием задачи
-mu0, sigma0 = 28.6395, 12.5856
-ks_normal = stats.kstest(x, 'norm', args=(mu0, sigma0))
+def evaluate_continuous(x, candidate):
+    if candidate == 'normal':
+        args = (x.mean(), x.std(ddof=1))
+        cvm = stats.cramervonmises(x, 'norm', args=args)
+        jb = stats.jarque_bera(x)
+        return {'args': args, 'cvm_p': cvm.pvalue, 'jb_p': jb.pvalue}
 
-# Jarque-Bera как отдельная проверка нормальности
-jb_stat, jb_p = stats.jarque_bera(x)`
+    if candidate == 'lognormal':
+        shape, loc, scale = stats.lognorm.fit(x, floc=0)
+        cvm = stats.cramervonmises(x, 'lognorm', args=(shape, loc, scale))
+        log_x = np.log(x)
+        jb = stats.jarque_bera(log_x)
+        return {'args': (shape, loc, scale), 'cvm_p': cvm.pvalue, 'jb_log_p': jb.pvalue}
+
+    raise ValueError('Unknown candidate')
+
+bill_length = continuous_features['bill_length_mm']
+mpg_values = continuous_features['mpg']
+diamond_price = continuous_features['price']`
 
 const pearsonCode = `import numpy as np
 from scipy import stats
 
 def pearson_for_continuous(data, dist_name, dist_args, bins='sturges'):
-    observed, bin_edges = np.histogram(data, bins=bins)
-    n = observed.sum()
-
+    observed, edges = np.histogram(data, bins=bins)
     cdf = getattr(stats, dist_name).cdf
-    probs = np.diff(cdf(bin_edges, *dist_args))
-    expected = n * probs
+    probs = np.diff(cdf(edges, *dist_args))
+    expected = observed.sum() * probs
 
     mask = expected > 0
     return stats.chisquare(f_obs=observed[mask], f_exp=expected[mask])
 
-chi2_stat, chi2_p = pearson_for_continuous(x, 'norm', normal_args)`
+# пример:
+# pearson_for_continuous(diamond_price, 'lognorm', lognorm_args)`
 
-const workflowSteps = [
-  'очистить признак от пропусков и получить `numpy`-массив;',
-  'оценить параметры каждого кандидата распределения;',
-  'запустить омега-квадрат и, где нужно, Колмогорова;',
-  'отдельно собрать Пирсона через интервалы и ожидаемые частоты;',
-  'использовать Jarque-Bera как отдельную проверку на нормальность.',
+const workflowItems = [
+  {
+    title: '1. Сводка по признаку',
+    content: [
+      'Сразу выписываем `mean`, `median`, `std`, `skew`, `min`, `max`.',
+      'Эта сводка нужна не для красоты: по ней мы понимаем, стоит ли проверять нормальность, логнормальность или обе гипотезы.',
+    ],
+  },
+  {
+    title: '2. Подготовка параметров модели',
+    content: [
+      'Для нормальной гипотезы нужны выборочные `mean` и `std`.',
+      'Для логнормальной — параметры, полученные из `stats.lognorm.fit(x, floc=0)` или эквивалентной процедуры на логарифмах.',
+    ],
+  },
+  {
+    title: '3. Основные критерии',
+    content: [
+      'Для непрерывного признака удобно запускать критерий Крамера-Мизеса-Смирнова по самой CDF.',
+      'Пирсон χ² добавляем как отдельную проверку через интервалы и ожидаемые частоты.',
+    ],
+  },
+  {
+    title: '4. Отдельная проверка нормальной формы',
+    content: [
+      'Jarque-Bera полезен именно там, где обсуждаем нормальность.',
+      'Для логнормальной гипотезы логичнее смотреть на `jarque_bera(np.log(x))`, а не на исходный столбец.',
+    ],
+  },
+]
+
+const summaryColumns = ['penguins.bill_length_mm', 'mpg.mpg', 'diamonds.price']
+
+const summaryRows = [
+  {
+    label: 'Фактический диапазон',
+    values: ['32.1-59.6', '9-46.6', '326-18823'],
+  },
+  {
+    label: 'Центр',
+    values: ['x̄ = 43.92, med = 44.45', 'x̄ = 23.52, med = 23', 'x̄ = 3932.8, med = 2401'],
+  },
+  {
+    label: 'Асимметрия',
+    values: ['0.053', '0.455', '1.618'],
+  },
+  {
+    label: 'Первый кандидат',
+    values: ['Нормальная модель', 'Нормальная модель как первое приближение', 'Логнормальная модель'],
+  },
+  {
+    label: 'Что особенно важно в коде',
+    values: [
+      'Проверять форму, а не радоваться одному красивому среднему',
+      'Не объявлять логнормальность только из-за положительной поддержки',
+      'Сравнивать `price` и `log(price)`',
+    ],
+  },
 ]
 
 const documentationLinks = [
@@ -76,16 +148,16 @@ const documentationLinks = [
     href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.cramervonmises.html',
   },
   {
-    label: 'SciPy: kstest',
-    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kstest.html',
-  },
-  {
     label: 'SciPy: jarque_bera',
     href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.jarque_bera.html',
   },
   {
     label: 'SciPy: lognorm',
     href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.lognorm.html',
+  },
+  {
+    label: 'SciPy: chisquare',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chisquare.html',
   },
 ]
 
@@ -99,100 +171,62 @@ function Practice3_Screen5({ setContextNotes }) {
       <CourseHeader
         badge="Практика 3 -> КРИТЕРИИ И КОД"
         title="Непрерывные признаки в Python"
-        subtitle="Собираем рабочий шаблон для нормальной, равномерной и логнормальной гипотез."
+        subtitle="Собираем один аккуратный шаблон для измерений пингвинов, `mpg` и цен бриллиантов, а не для будущих лабораторных признаков."
       />
 
       <section className="content-block space-y-6">
         <DatasetCard
-          title="Шаблон ноутбука для непрерывного признака"
-          text="Здесь `task_data` — любой непрерывный столбец из вашей лабораторной. Сначала готовим кандидатов распределения, затем запускаем критерии согласия и фиксируем результаты в одной таблице."
-          code={notebookCode}
-          codeTitle="Python: стартовый scaffold для непрерывного признака"
+          title="Стартовый scaffold для трех реальных непрерывных датасетов"
+          text="Один и тот же шаблон можно переиспользовать для разных непрерывных признаков. Разница будет не в структуре кода, а в выбранной гипотезе и в том, что именно вы комментируете в выводе."
+          code={datasetCode}
+          codeTitle="Python: загрузка и базовая сводка по признаку"
         />
 
-        <section className="grid gap-4 lg:grid-cols-5">
-          {workflowSteps.map((step, index) => (
-            <article
-              key={step}
-              className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-900/70"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                Шаг {index + 1}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">{step}</p>
-            </article>
-          ))}
-        </section>
+        <TaskBlock title="Короткий рабочий pipeline для непрерывного признака" items={workflowItems} />
 
-        <section className="grid gap-4 xl:grid-cols-2">
-          <PlotViewer
-            title="QQ-plot: почти нормальная ситуация"
-            caption="Когда точки располагаются вдоль диагонали, нормальная модель выглядит устойчивым кандидатом для дальнейшей формальной проверки."
-          >
-            <QQPlotChart variant="normal" />
-          </PlotViewer>
-
-          <PlotViewer
-            title="QQ-plot: асимметричный признак"
-            caption="Систематический изгиб в правом хвосте предупреждает, что для признака стоит проверить логнормальность или другую асимметричную модель."
-          >
-            <QQPlotChart variant="skewed" />
-          </PlotViewer>
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            На каких реальных сигналах строится код
+          </h3>
+          <div className="mt-4">
+            <ComparisonTable columns={summaryColumns} rows={summaryRows} />
+          </div>
         </section>
 
         <section className="space-y-4">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-            Отдельно про критерий Пирсона
+            Функция для сравнения кандидатов
           </h3>
           <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
-            Для непрерывного признака Пирсон живет не на сырых наблюдениях, а на интервалах. Поэтому
-            полезно иметь небольшую функцию, которая переводит CDF выбранного закона в ожидаемые
-            частоты.
+            Здесь одна и та же логика применяется к трем очень разным непрерывным признакам: почти симметричным
+            измерениям, умеренно асимметричному `mpg` и ярко скошенным ценам.
           </p>
-          <CodeBlock code={pearsonCode} language="python" title="Python: Пирсон для непрерывного признака" />
+          <CodeBlock code={candidateCode} language="python" title="Python: сравнение непрерывных кандидатов" />
         </section>
 
-        <AlertBox title="Что обязательно прописать в отчете">
+        <section className="space-y-4">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Отдельно про Пирсона для непрерывных данных
+          </h3>
+          <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
+            Для непрерывного признака Пирсон χ² не появляется из одной готовой функции по сырым значениям: сначала нужно
+            построить интервалы и перевести CDF выбранного закона в ожидаемые частоты.
+          </p>
+          <CodeBlock code={pearsonCode} language="python" title="Python: Пирсон χ² для непрерывного признака" />
+        </section>
+
+        <AlertBox title="Что теперь не нужно дублировать в каждом блоке">
           <p>
-            Для каждого непрерывного признака укажите, какие именно параметры закона вы оценивали,
-            как строили интервалы для Пирсона и почему выбранный закон выглядит разумным еще до
-            запуска тестов.
+            Не повторяйте на каждом экране заново объяснение QQ-plot и списка распределений. В этой практике кодовый
+            экран должен отвечать на другой вопрос: как один раз собрать проверку так, чтобы потом только менять признак,
+            кандидата и комментарий к результату.
           </p>
         </AlertBox>
 
-        <section className="grid gap-4 md:grid-cols-3">
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-              До тестов
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              Гистограмма, QQ-plot, базовые характеристики формы и ограничения области значений.
-            </p>
-          </article>
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-              Во время тестов
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              Единая таблица параметров, статистик и `p-value`, чтобы видеть согласованность
-              разных критериев.
-            </p>
-          </article>
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-              После тестов
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              Статистическое решение следует связать с содержательным смыслом признака и формой
-              распределения.
-            </p>
-          </article>
-        </section>
-
-        <KeyIdea title="Правильный результат — это не просто p-value">
-          Сильное решение по непрерывному признаку обычно выглядит так: гипотеза выдвинута по
-          гистограмме и смыслу признака, затем подтверждена или ослаблена омега-квадратом и
-          Пирсоном, а Jarque-Bera и Колмогоров используются как адресные дополнительные проверки.
+        <KeyIdea title="Универсальный код, разные статистические истории">
+          Измерения клюва пингвинов, расход топлива и цены бриллиантов требуют разных интерпретаций, хотя кодовая рамка
+          у них почти одна и та же. Именно это и важно показать на теоретическом экране: не конкретную ЛР, а общий
+          рабочий паттерн.
         </KeyIdea>
 
         <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">

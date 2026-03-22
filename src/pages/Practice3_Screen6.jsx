@@ -1,76 +1,127 @@
 import { useEffect } from 'react'
 import AlertBox from '../components/AlertBox'
 import CodeBlock from '../components/CodeBlock'
+import ComparisonTable from '../components/ComparisonTable'
 import CourseHeader from '../components/CourseHeader'
 import DatasetCard from '../components/DatasetCard'
-import DistributionFamilyExplorer from '../components/DistributionFamilyExplorer'
 import KeyIdea from '../components/KeyIdea'
 import ScreenNavigation from '../components/ScreenNavigation'
+import TaskBlock from '../components/TaskBlock'
 
 const contextNotes = [
   {
-    title: 'Биномиальное или Пуассон?',
-    text: 'Если заранее известно фиксированное число испытаний и считается число успехов, это биномиальная логика. Если считаем поток событий за интервал времени или пространства, чаще возникает модель Пуассона.',
+    title: 'Главный пример — `taxis.passengers`',
+    text: 'На этом экране мы не говорим абстрактно про любые дискретные признаки, а смотрим на реальное число пассажиров в поездке такси.',
   },
   {
-    title: 'Колмогоров для дискреты',
-    text: 'Классический тест Колмогорова изначально строился для непрерывных распределений. В учебной лабораторной его можно использовать как рабочий ориентир, но в отчете полезно честно отметить это ограничение.',
+    title: 'Смысл важнее красивой формулы',
+    text: 'Если признак ограничен сверху и сильно сосредоточен около 1-2, модель Пуассона нельзя считать естественной только потому, что она знакома по учебнику.',
   },
 ]
 
-const discreteNotebookCode = `import numpy as np
+const datasetCode = `import seaborn as sns
+import numpy as np
 from scipy import stats
 
-x = discrete_data.dropna().to_numpy()
-values, observed = np.unique(x, return_counts=True)
-n_obs = observed.sum()
+taxis = sns.load_dataset('taxis')
+passengers = taxis['passengers'].dropna().to_numpy()
 
-sample_mean = x.mean()
-sample_var = x.var(ddof=1)
+values, observed = np.unique(passengers, return_counts=True)
+sample_mean = passengers.mean()       # 1.539
+sample_var = passengers.var(ddof=1)   # 1.449
 
-# Гипотеза Пуассона
-lambda_hat = sample_mean
-expected_poisson = n_obs * stats.poisson.pmf(values, mu=lambda_hat)
+summary = {
+    'min': passengers.min(),
+    'max': passengers.max(),
+    'mean': sample_mean,
+    'variance': sample_var,
+    'share_of_1': (passengers == 1).mean(),
+}`
+
+const modelCode = `from scipy import stats
+import numpy as np
+
+def poisson_expected(values, sample):
+    lam = sample.mean()
+    probs = stats.poisson.pmf(values, mu=lam)
+    return sample.size * probs
+
+def capacity_benchmark(values, sample, seats=6):
+    # Это не "истинная" биномиальная модель поездки,
+    # а ограниченный сверху benchmark для сравнения с Пуассоном.
+    p_hat = sample.mean() / seats
+    probs = stats.binom.pmf(values, n=seats, p=p_hat)
+    return sample.size * probs
+
+expected_poisson = poisson_expected(values, passengers)
+expected_capacity = capacity_benchmark(values, passengers, seats=6)
+
 chi2_poisson = stats.chisquare(f_obs=observed, f_exp=expected_poisson)
-ks_poisson = stats.kstest(x, stats.poisson(mu=lambda_hat).cdf)
-
-# Гипотеза биномиального распределения:
-# n_trials задается смыслом задачи, а не берется автоматически из данных
-n_trials = ...
-p_hat = sample_mean / n_trials
-expected_binom = n_obs * stats.binom.pmf(values, n=n_trials, p=p_hat)
-chi2_binom = stats.chisquare(f_obs=observed, f_exp=expected_binom)
-ks_binom = stats.kstest(x, stats.binom(n_trials, p_hat).cdf)`
+chi2_capacity = stats.chisquare(f_obs=observed, f_exp=expected_capacity)`
 
 const groupingCode = `import numpy as np
 
 mask = expected_poisson >= 5
 
-observed_main = observed[mask]
-expected_main = expected_poisson[mask]
+observed_grouped = np.append(observed[mask], observed[~mask].sum())
+expected_grouped = np.append(expected_poisson[mask], expected_poisson[~mask].sum())
 
-tail_observed = observed[~mask].sum()
-tail_expected = expected_poisson[~mask].sum()
+chi2_grouped = stats.chisquare(f_obs=observed_grouped, f_exp=expected_grouped)`
 
-observed_grouped = np.append(observed_main, tail_observed)
-expected_grouped = np.append(expected_main, tail_expected)`
-
-const decisionCards = [
+const decisionItems = [
   {
-    title: 'Шаг 1. Тип процесса',
-    text: 'Фиксированное число испытаний ведет к биномиальному закону, поток событий без жесткого верхнего потолка — к Пуассону.',
+    title: '1. Сначала описываем фактическую форму',
+    content: [
+      'У `taxis.passengers` значения только от `0` до `6`.',
+      'Из `6433` поездок `72.72%` имеют ровно `1` пассажира, а `86.34%` — `1` или `2` пассажиров.',
+    ],
   },
   {
-    title: 'Шаг 2. Параметры',
-    text: 'Для Пуассона оцениваем $\\lambda$ через выборочную среднюю. Для биномиального нужны и число испытаний $n$, и вероятность успеха $p$.',
+    title: '2. Потом сверяемся с содержанием модели',
+    content: [
+      'Пуассон лучше подходит для неограниченного потока событий.',
+      'Для числа пассажиров ограниченность вместимостью машины делает такую гипотезу содержательно слабее.',
+    ],
   },
   {
-    title: 'Шаг 3. Частоты',
-    text: 'Через `pmf` получаем теоретические вероятности и переводим их в ожидаемые частоты, умножая на объем выборки.',
+    title: '3. И только потом считаем Expected',
+    content: [
+      'Для Пирсона χ² надо получить теоретические вероятности и перевести их в ожидаемые частоты.',
+      'Если некоторые `Expected < 5`, редкие категории приходится объединять.',
+    ],
+  },
+]
+
+const countColumns = ['0', '1', '2', '3', '4', '5', '6']
+
+const countRows = [
+  {
+    label: 'Наблюдаемые частоты',
+    values: [96, 4678, 876, 243, 110, 277, 153],
+    highlight: true,
   },
   {
-    title: 'Шаг 4. Проверка',
-    text: 'Запускаем Пирсона и Колмогорова, затем сравниваем, какая модель лучше согласуется с данными и с предметным смыслом задачи.',
+    label: 'Доли, %',
+    values: ['1.49', '72.72', '13.62', '3.78', '1.71', '4.31', '2.38'],
+  },
+  {
+    label: 'Что это подсказывает',
+    values: ['Редко', 'Главный пик', 'Вторая масса', 'Хвост', 'Хвост', 'Хвост', 'Хвост'],
+  },
+]
+
+const documentationLinks = [
+  {
+    label: 'SciPy: chisquare',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chisquare.html',
+  },
+  {
+    label: 'SciPy: poisson',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.poisson.html',
+  },
+  {
+    label: 'SciPy: binom',
+    href: 'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom.html',
   },
 ]
 
@@ -84,78 +135,85 @@ function Practice3_Screen6({ setContextNotes }) {
       <CourseHeader
         badge="Практика 3 -> КРИТЕРИИ И КОД"
         title="Дискретные признаки в Python"
-        subtitle="Рабочий шаблон для задач про биномиальное распределение и закон Пуассона."
+        subtitle="Разбираем `taxis.passengers` как реальный пример, где механика процесса важнее автоматической любви к Пуассону."
       />
 
       <section className="content-block space-y-6">
         <DatasetCard
-          title="Шаблон ноутбука для дискретного признака"
-          text="Здесь `discrete_data` — любой счетный признак из вашей лабораторной. Сначала фиксируем гипотезу о механике процесса, затем считаем теоретические вероятности, ожидаемые частоты и запускаем критерии."
-          code={discreteNotebookCode}
-          codeTitle="Python: scaffold для дискретного признака"
+          title="Стартовый scaffold для `taxis.passengers`"
+          text="Этот пример хорош тем, что дает сразу конкретную дискретную частотную таблицу. По ней удобно обсуждать не только код, но и то, почему сама гипотеза о распределении должна быть содержательной."
+          code={datasetCode}
+          codeTitle="Python: базовая сводка по дискретному признаку"
         />
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {decisionCards.map((card) => (
-            <article
-              key={card.title}
-              className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-900/70"
-            >
-              <h3 className="text-base font-semibold text-slate-900 dark:text-white">{card.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-                {card.text}
-              </p>
-            </article>
-          ))}
-        </section>
+        <TaskBlock title="Как вести себя с дискретным признаком без повторов и путаницы" items={decisionItems} />
 
-        <DistributionFamilyExplorer allowedIds={['binomial', 'poisson']} initialId="poisson" />
+        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Что реально происходит в `taxis.passengers`
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            Здесь полезно держать в голове три числа: среднее `1.539`, дисперсия `1.449` и пик в точке `1`, который
+            собирает почти три четверти поездок.
+          </p>
+          <div className="mt-4">
+            <ComparisonTable columns={countColumns} rows={countRows} />
+          </div>
+        </section>
 
         <section className="space-y-4">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-            Что делать с малыми ожидаемыми частотами
+            Код для сравнения дискретных кандидатов
           </h3>
           <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
-            Критерий Пирсона требует, чтобы ожидаемые частоты в корзинах не были слишком малы.
-            Поэтому хвосты распределения часто приходится объединять в одну группу.
+            Ниже шаблон не обещает, что ограниченная benchmark-модель автоматически победит. Он только делает честное
+            сравнение: сначала строим Expected для разных гипотез, потом запускаем Пирсона χ².
+          </p>
+          <CodeBlock code={modelCode} language="python" title="Python: Expected frequencies для дискретных моделей" />
+        </section>
+
+        <section className="space-y-4">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Что делать с редкими категориями
+          </h3>
+          <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
+            На хвостах у дискретного распределения Expected быстро становятся малыми. Поэтому для Пирсона χ² важно
+            заранее уметь объединять редкие категории, а не надеяться, что функция сама все исправит.
           </p>
           <CodeBlock code={groupingCode} language="python" title="Python: объединение редких категорий" />
         </section>
 
-        <AlertBox title="Академически аккуратная формулировка вывода">
+        <AlertBox title="Почему этот экран не должен дублировать лабораторный">
           <p>
-            Даже если одна модель дает формально лучшее `p-value`, не забывайте о содержательном
-            смысле. В отчете важна фраза не “данные точно распределены по Пуассону”, а “данные не
-            дают оснований отвергнуть гипотезу о распределении Пуассона на уровне значимости 0.05”.
+            Здесь мы строим общий рабочий шаблон и объясняем, как читать реальную частотную таблицу. На лабораторном
+            экране уже будет конкретное задание. Поэтому здесь не нужен повтор списка шагов из ЛР, а нужен смысл:
+            зачем мы вообще сравниваем модели и почему выбор гипотезы для `passengers` не сводится к одной строке SciPy.
           </p>
         </AlertBox>
 
-        <KeyIdea title="Сначала механизм, потом тест">
-          Для дискретных задач особенно опасно подгонять закон распределения постфактум. Сначала
-          решите, какая модель вообще соответствует природе процесса, и только затем запускайте
-          критерии согласия.
+        <KeyIdea title="Для дискретных данных сначала думаем о процессе, потом о тесте">
+          В примере с `taxis.passengers` сами данные подсказывают осторожность с Пуассоном: диапазон ограничен,
+          вместимость фиксирована, а основная масса поездок сосредоточена в точках `1` и `2`. Именно такие реальные
+          сигналы и должны направлять код, а не наоборот.
         </KeyIdea>
 
-        <section className="grid gap-4 md:grid-cols-2">
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              Быстрая эвристика
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              Если выборочная дисперсия сопоставима со средней, это поддерживает пуассоновскую
-              гипотезу. Если дисперсия меньше и есть естественный верхний предел, усиливается
-              аргумент в пользу биномиальной модели.
-            </p>
-          </article>
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              Что писать в выводе
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              В дискретной задаче особенно важно объяснить не только статистический результат, но и
-              то, почему выбранная модель соответствует смыслу наблюдаемого процесса.
-            </p>
-          </article>
+        <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Официальная документация Python
+          </h3>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {documentationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
         </section>
       </section>
 
