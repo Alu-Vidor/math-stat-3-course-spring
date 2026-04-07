@@ -109,7 +109,26 @@ function withTimeout(promise, timeoutMs, errorMessage = 'Превышено вр
 }
 
 function normalizeOutput(chunks) {
-  return chunks.join('').replace(/\s+$/, '')
+  const source = Array.isArray(chunks) ? chunks.join('') : String(chunks ?? '')
+  return source.replace(/\s+$/, '')
+}
+
+function mergeOutputChunk(current, chunk) {
+  const nextChunk = String(chunk ?? '')
+
+  if (!nextChunk) {
+    return current
+  }
+
+  if (!current) {
+    return nextChunk
+  }
+
+  const lastChar = current[current.length - 1]
+  const firstChar = nextChunk[0]
+  const needsNewline = lastChar !== '\n' && firstChar !== '\n'
+
+  return needsNewline ? `${current}\n${nextChunk}` : `${current}${nextChunk}`
 }
 
 function usesSeaborn(code) {
@@ -270,18 +289,18 @@ async function executePythonInSession(code, sessionKey, onStatus) {
   const pyodide = await loadPyodideRuntime(onStatus)
   await preparePackages(pyodide, code, onStatus)
 
-  const stdoutChunks = []
-  const stderrChunks = []
+  let stdoutOutput = ''
+  let stderrOutput = ''
 
   pyodide.setStdout({
     batched: (message) => {
-      stdoutChunks.push(message)
+      stdoutOutput = mergeOutputChunk(stdoutOutput, message)
     },
   })
 
   pyodide.setStderr({
     batched: (message) => {
-      stderrChunks.push(message)
+      stderrOutput = mergeOutputChunk(stderrOutput, message)
     },
   })
 
@@ -297,14 +316,14 @@ async function executePythonInSession(code, sessionKey, onStatus) {
       sessionKey,
       hasError: Boolean(result.error),
       plots: result.plots?.length ?? 0,
-      stdoutLength: normalizeOutput(stdoutChunks).length,
-      stderrLength: normalizeOutput(stderrChunks).length,
+      stdoutLength: normalizeOutput(stdoutOutput).length,
+      stderrLength: normalizeOutput(stderrOutput).length,
       hasValue: Boolean(result.value),
     })
 
     return {
-      stdout: normalizeOutput(stdoutChunks),
-      stderr: normalizeOutput(stderrChunks),
+      stdout: normalizeOutput(stdoutOutput),
+      stderr: normalizeOutput(stderrOutput),
       value: result.value,
       plots: result.plots,
       error: result.error,
@@ -315,8 +334,8 @@ async function executePythonInSession(code, sessionKey, onStatus) {
       message: error instanceof Error ? error.message : String(error),
     })
     return {
-      stdout: normalizeOutput(stdoutChunks),
-      stderr: normalizeOutput(stderrChunks),
+      stdout: normalizeOutput(stdoutOutput),
+      stderr: normalizeOutput(stderrOutput),
       value: null,
       plots: [],
       error: error instanceof Error ? error.message : String(error),

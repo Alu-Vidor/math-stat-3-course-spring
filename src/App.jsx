@@ -8,6 +8,7 @@ import { courseData } from './data/courseData'
 function AppShell() {
   const { id, screenId } = useParams()
   const location = useLocation()
+  const screenPathKey = `${location.pathname}${location.search}`
   const practiceNumber = Number(id)
   const screenNumber = screenId === undefined ? undefined : Number(screenId)
   const practice = courseData.find((item) => item.number === practiceNumber)
@@ -30,7 +31,7 @@ function AppShell() {
   }
 
   return (
-    <PythonExecutionProvider screenKey={location.pathname}>
+    <PythonExecutionProvider key={screenPathKey} screenKey={screenPathKey}>
       <Layout practices={courseData} currentPracticeId={practice.id}>
         {({ setContext, setContextNotes }) => (
           <PracticePage
