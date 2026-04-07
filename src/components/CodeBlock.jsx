@@ -64,6 +64,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
   const isPython = language.toLowerCase() === 'python'
   const hasVisibleOutput = isPython && hasLikelyVisibleOutput(code)
   const canRun = runnable ?? hasVisibleOutput
+  const logPrefix = `[CodeBlock:${title}]`
   const hasExecutionResult = executionResult !== null
   const blockMeta = canRun
     ? getBlockMeta(blockId)
@@ -93,15 +94,27 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
 
   useEffect(() => {
     if (!canRun) {
+      console.info(`${logPrefix} run disabled`, {
+        language,
+        isPython,
+        hasVisibleOutput,
+        runnable,
+      })
       return undefined
     }
 
+    console.info(`${logPrefix} register runnable block`, {
+      language,
+      hasVisibleOutput,
+      runnable,
+    })
     registerBlock(blockId, true)
 
     return () => {
+      console.info(`${logPrefix} unregister block`)
       unregisterBlock(blockId)
     }
-  }, [blockId, canRun, registerBlock, unregisterBlock])
+  }, [blockId, canRun, hasVisibleOutput, isPython, language, logPrefix, registerBlock, runnable, unregisterBlock])
 
   useEffect(() => {
     setExecutionResult(null)
@@ -116,6 +129,10 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
   }
 
   const handleRun = useCallback(async ({ isAutoRun = false } = {}) => {
+    console.info(`${logPrefix} run start`, {
+      mode: isAutoRun ? 'auto' : 'manual',
+      codeLength: code.length,
+    })
     setIsRunning(true)
     setExecutionResult(null)
 
@@ -128,6 +145,14 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
 
       setExecutionResult(result)
       setStatus(result.error ? 'Выполнение завершилось с ошибкой' : 'Выполнение завершено')
+      console.info(`${logPrefix} run complete`, {
+        mode: isAutoRun ? 'auto' : 'manual',
+        hasError: Boolean(result.error),
+        hasStdout: Boolean(result.stdout),
+        hasValue: Boolean(result.value),
+        hasStderr: Boolean(result.stderr),
+        plots: result.plots?.length ?? 0,
+      })
       return !result.error
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
@@ -149,11 +174,16 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
         hasAutoRunStartedRef.current = false
       }
 
+      console.error(`${logPrefix} run failed`, {
+        mode: isAutoRun ? 'auto' : 'manual',
+        shouldRetryAutoRun,
+        message,
+      })
       return false
     } finally {
       setIsRunning(false)
     }
-  }, [blockId, code, runBlock])
+  }, [blockId, code, logPrefix, runBlock])
 
   useEffect(() => {
     if (!canRun || !hasVisibleOutput || hasAutoRunStartedRef.current) {
@@ -161,10 +191,20 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     }
 
     if (!blockMeta.canRun || blockMeta.isExecuted || isRunning || isSessionBusy || isResettingSession) {
+      console.info(`${logPrefix} auto-run skipped`, {
+        canRun,
+        hasVisibleOutput,
+        blockCanRun: blockMeta.canRun,
+        isExecuted: blockMeta.isExecuted,
+        isRunning,
+        isSessionBusy,
+        isResettingSession,
+      })
       return
     }
 
     hasAutoRunStartedRef.current = true
+    console.info(`${logPrefix} auto-run trigger`)
     void handleRun({ isAutoRun: true })
   }, [
     blockMeta.canRun,
@@ -175,6 +215,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     isResettingSession,
     isRunning,
     isSessionBusy,
+    logPrefix,
   ])
 
   const handleReset = () => {

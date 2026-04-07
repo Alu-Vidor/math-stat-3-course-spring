@@ -1,5 +1,8 @@
 const PYODIDE_VERSION = '0.29.3'
-const PYODIDE_BASE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full`
+const PYODIDE_BASE_URLS = [
+  `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full`,
+  `https://pyodide-cdn2.iodide.io/v${PYODIDE_VERSION}/full`,
+]
 
 const INIT_SCRIPT = `
 import pyodide_http
@@ -90,6 +93,8 @@ except Exception:
     pass
 `
 
+const RUNNER_LOG_PREFIX = '[pythonRunner]'
+
 let pyodidePromise = null
 let seabornPromise = null
 let executionQueue = Promise.resolve()
@@ -123,23 +128,68 @@ function setDefaultStreams(pyodide) {
 async function loadPyodideRuntime(onStatus) {
   if (!pyodidePromise) {
     pyodidePromise = (async () => {
-      onStatus('Загружаем Python runtime...')
+      console.info(`${RUNNER_LOG_PREFIX} init runtime`)
+      let lastError = null
 
-      const { loadPyodide } = await import(
-        /* @vite-ignore */
-        `${PYODIDE_BASE_URL}/pyodide.mjs`
-      )
+      for (let index = 0; index < PYODIDE_BASE_URLS.length; index += 1) {
+        const baseUrl = PYODIDE_BASE_URLS[index]
+        const host = (() => {
+          try {
+            return new URL(baseUrl).host
+          } catch {
+            return baseUrl
+          }
+        })()
 
-      const pyodide = await loadPyodide({
-        indexURL: `${PYODIDE_BASE_URL}/`,
-      })
+        try {
+          console.info(`${RUNNER_LOG_PREFIX} try CDN`, {
+            attempt: index + 1,
+            total: PYODIDE_BASE_URLS.length,
+            host,
+          })
+          onStatus(`Загружаем Python runtime (${index + 1}/${PYODIDE_BASE_URLS.length})...`)
 
-      onStatus('Подготавливаем окружение...')
-      await pyodide.loadPackage('pyodide-http')
-      await pyodide.runPythonAsync(INIT_SCRIPT)
-      setDefaultStreams(pyodide)
+          const { loadPyodide } = await withTimeout(
+            import(
+              /* @vite-ignore */
+              `${baseUrl}/pyodide.mjs`
+            ),
+            30000,
+            `Не удалось загрузить pyodide.mjs с ${host} за 30с.`,
+          )
 
-      return pyodide
+          const pyodide = await withTimeout(
+            loadPyodide({
+              indexURL: `${baseUrl}/`,
+            }),
+            30000,
+            `Не удалось инициализировать Pyodide с ${host} за 30с.`,
+          )
+
+          onStatus('Подготавливаем окружение...')
+          await pyodide.loadPackage('pyodide-http')
+          await pyodide.runPythonAsync(INIT_SCRIPT)
+          setDefaultStreams(pyodide)
+          console.info(`${RUNNER_LOG_PREFIX} runtime ready`, { host })
+
+          return pyodide
+        } catch (error) {
+          lastError = error
+          console.warn(`${RUNNER_LOG_PREFIX} CDN failed`, {
+            host,
+            attempt: index + 1,
+            message: error instanceof Error ? error.message : String(error),
+          })
+
+          if (index < PYODIDE_BASE_URLS.length - 1) {
+            onStatus(`Источник ${host} недоступен, пробуем резервный...`)
+          }
+        }
+      }
+
+      const reason = lastError instanceof Error ? lastError.message : String(lastError)
+      console.error(`${RUNNER_LOG_PREFIX} all CDNs failed`, { reason })
+      throw new Error(`Не удалось загрузить Python runtime ни с одного CDN. Последняя ошибка: ${reason}`)
     })()
 
     pyodidePromise.catch(() => {
@@ -181,6 +231,13 @@ async function preparePackages(pyodide, code, onStatus) {
   const needsPandas = /\bimport\s+pandas\b|\bfrom\s+pandas\b|pd\./.test(code)
   const needsMatplotlib = /\bimport\s+matplotlib\b|\bfrom\s+matplotlib\b|plt\./.test(code) || /\bimport\s+seaborn\b|\bfrom\s+seaborn\b|sns\./.test(code)
   const needsScipy = /\bimport\s+scipy\b|\bfrom\s+scipy\b|\bstats\./.test(code)
+  console.info(`${RUNNER_LOG_PREFIX} package scan`, {
+    needsNumpy,
+    needsPandas,
+    needsMatplotlib,
+    needsScipy,
+    needsSeaborn: usesSeaborn(code),
+  })
 
   if (needsNumpy || needsPandas || needsMatplotlib || needsScipy) {
     onStatus('Подготавливаем библиотеки...')
@@ -206,6 +263,10 @@ async function preparePackages(pyodide, code, onStatus) {
 }
 
 async function executePythonInSession(code, sessionKey, onStatus) {
+  console.info(`${RUNNER_LOG_PREFIX} execute start`, {
+    sessionKey,
+    codeLength: code.length,
+  })
   const pyodide = await loadPyodideRuntime(onStatus)
   await preparePackages(pyodide, code, onStatus)
 
@@ -232,6 +293,14 @@ async function executePythonInSession(code, sessionKey, onStatus) {
 
     const rawResult = await pyodide.runPythonAsync(EXECUTION_SCRIPT)
     const result = JSON.parse(rawResult)
+    console.info(`${RUNNER_LOG_PREFIX} execute complete`, {
+      sessionKey,
+      hasError: Boolean(result.error),
+      plots: result.plots?.length ?? 0,
+      stdoutLength: normalizeOutput(stdoutChunks).length,
+      stderrLength: normalizeOutput(stderrChunks).length,
+      hasValue: Boolean(result.value),
+    })
 
     return {
       stdout: normalizeOutput(stdoutChunks),
@@ -241,6 +310,10 @@ async function executePythonInSession(code, sessionKey, onStatus) {
       error: result.error,
     }
   } catch (error) {
+    console.error(`${RUNNER_LOG_PREFIX} execute failure`, {
+      sessionKey,
+      message: error instanceof Error ? error.message : String(error),
+    })
     return {
       stdout: normalizeOutput(stdoutChunks),
       stderr: normalizeOutput(stderrChunks),
@@ -256,6 +329,7 @@ async function executePythonInSession(code, sessionKey, onStatus) {
 }
 
 async function clearPythonSession(sessionKey, onStatus) {
+  console.info(`${RUNNER_LOG_PREFIX} reset session start`, { sessionKey })
   const pyodide = await loadPyodideRuntime(onStatus)
 
   pyodide.globals.set('__course_session_key__', sessionKey)
@@ -263,12 +337,14 @@ async function clearPythonSession(sessionKey, onStatus) {
   try {
     onStatus('Сбрасываем общую среду...')
     await pyodide.runPythonAsync(RESET_SESSION_SCRIPT)
+    console.info(`${RUNNER_LOG_PREFIX} reset session complete`, { sessionKey })
   } finally {
     pyodide.globals.delete('__course_session_key__')
   }
 }
 
 function schedulePythonTask(task) {
+  console.info(`${RUNNER_LOG_PREFIX} queue task`)
   const scheduledExecution = executionQueue
     .catch(() => undefined)
     .then(() => task())
