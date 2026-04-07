@@ -15,7 +15,6 @@ import CourseHeader from '../components/CourseHeader'
 import KeyIdea from '../components/KeyIdea'
 import MathBlock from '../components/MathBlock'
 import PlotViewer from '../components/PlotViewer'
-import TerminalOutput from '../components/TerminalOutput'
 
 const ciCode = `import numpy as np
 import scipy.stats as st
@@ -198,12 +197,6 @@ function Practice1_Screen7({ setContextNotes }) {
             строит его одной командой.
           </p>
           <CodeBlock code={ciCode} language="python" title="Python" />
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-              Вывод в терминале
-            </p>
-            <TerminalOutput lines="Доверительный интервал (95%): (171.68, 179.71)" />
-          </div>
         </div>
 
         <div className="space-y-4">

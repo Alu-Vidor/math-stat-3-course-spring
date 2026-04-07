@@ -22,7 +22,6 @@ import MathBlock from '../components/MathBlock'
 import CodeBlock from '../components/CodeBlock'
 import KeyIdea from '../components/KeyIdea'
 import MathText from '../components/MathText'
-import TerminalOutput from '../components/TerminalOutput'
 import ComparisonTable from '../components/ComparisonTable'
 import PlotViewer from '../components/PlotViewer'
 
@@ -356,9 +355,6 @@ function Practice2_Screen6({ setContextNotes }) {
             className="text-base leading-relaxed text-slate-700 dark:text-slate-200"
           />
           <CodeBlock code={chiSquareCode} language="python" title="Python: критерий согласия Хи-квадрат" />
-          <TerminalOutput
-            lines={['Статистика Хи-квадрат: 5.40', 'P-value: 0.3690']}
-          />
         </section>
 
         <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">

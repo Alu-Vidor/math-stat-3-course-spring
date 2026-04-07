@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import CourseHeader from '../components/CourseHeader'
 import CodeBlock from '../components/CodeBlock'
 import KeyIdea from '../components/KeyIdea'
-import TerminalOutput from '../components/TerminalOutput'
 
 const contextNotes = [
   {
@@ -140,7 +139,6 @@ function Practice1_Screen5({ setContextNotes }) {
             (одномерный массив, по сути - одна колонка в таблице).
           </p>
           <CodeBlock code={createSeriesCode} language="python" title="Python" />
-          <TerminalOutput lines="[  65   70   72   75   78   80   82   85   88 1000]" />
         </div>
 
         <div className="space-y-3">
@@ -150,7 +148,6 @@ function Practice1_Screen5({ setContextNotes }) {
             описательной статистики. Считаем среднее и медиану:
           </p>
           <CodeBlock code={metricsCode} language="python" title="Python" />
-          <TerminalOutput lines={['Среднее арифметическое: 169.5', 'Медиана: 79.0']} />
         </div>
 
         <div className="space-y-3">
@@ -163,19 +160,6 @@ function Practice1_Screen5({ setContextNotes }) {
             насторожиться.
           </p>
           <CodeBlock code={describeCode} language="python" title="Python" />
-          <TerminalOutput
-            lines={[
-              'count      10.000000',
-              'mean      169.500000',
-              'std       290.523282',
-              'min        65.000000',
-              '25%        72.750000',
-              '50%        79.000000',
-              '75%        84.250000',
-              'max      1000.000000',
-              'dtype: float64',
-            ]}
-          />
         </div>
 
         <div className="space-y-3">
@@ -189,16 +173,6 @@ function Practice1_Screen5({ setContextNotes }) {
             удобно фильтровать строки и строить графики.
           </p>
           <CodeBlock code={dataframeCode} language="python" title="Python" />
-          <TerminalOutput
-            lines={[
-              '   student_id  score',
-              '0           1     65',
-              '1           2     70',
-              '2           3     72',
-              '3           4     75',
-              '4           5     78',
-            ]}
-          />
         </div>
 
         <div className="space-y-3">
@@ -210,17 +184,6 @@ function Practice1_Screen5({ setContextNotes }) {
             в источнике.
           </p>
           <CodeBlock code={outlierCode} language="python" title="Python" />
-          <TerminalOutput
-            lines={[
-              '   student_id  score',
-              '9          10   1000',
-              '8           9     88',
-              '7           8     85',
-              '',
-              '   student_id  score',
-              '9          10   1000',
-            ]}
-          />
         </div>
 
         <div className="space-y-3">
@@ -233,23 +196,6 @@ function Practice1_Screen5({ setContextNotes }) {
             <code className="mx-1 rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-700">read_excel()</code>.
           </p>
           <CodeBlock code={importFilesCode} language="python" title="Python" runnable={false} />
-          <TerminalOutput
-            lines={[
-              '   student_id  score',
-              '0           1     65',
-              '1           2     70',
-              '2           3     72',
-              '3           4     75',
-              '4           5     78',
-              '',
-              '   student_id  score',
-              '0           1     65',
-              '1           2     70',
-              '2           3     72',
-              '3           4     75',
-              '4           5     78',
-            ]}
-          />
         </div>
 
         <div className="space-y-3">
@@ -261,15 +207,6 @@ function Practice1_Screen5({ setContextNotes }) {
             чисел или пустые значения в критичных столбцах.
           </p>
           <CodeBlock code={fileCheckCode} language="python" title="Python" runnable={false} />
-          <TerminalOutput
-            lines={[
-              '(10, 2)',
-              "['student_id', 'score']",
-              'student_id    int64',
-              'score         int64',
-              'dtype: object',
-            ]}
-          />
         </div>
 
         <KeyIdea title="Инструмент не заменяет мозг">

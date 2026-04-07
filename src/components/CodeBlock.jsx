@@ -1,9 +1,54 @@
-import { useEffect, useId, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Check, Copy, LoaderCircle, Play, RotateCcw } from 'lucide-react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import TerminalOutput from './TerminalOutput'
 import { usePythonExecution } from './usePythonExecution'
+
+function getLastMeaningfulLine(code) {
+  const lines = code
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'))
+
+  return lines.length ? lines[lines.length - 1] : ''
+}
+
+function hasLikelyVisibleOutput(code) {
+  const normalizedCode = code.trim()
+
+  if (!normalizedCode) {
+    return false
+  }
+
+  if (/\b(print|display|help)\s*\(/.test(normalizedCode)) {
+    return true
+  }
+
+  if (/\b(?:plt|sns)\s*\./.test(normalizedCode) || /\.plot\s*\(/.test(normalizedCode)) {
+    return true
+  }
+
+  const lastLine = getLastMeaningfulLine(normalizedCode)
+
+  if (!lastLine || lastLine.endsWith(':')) {
+    return false
+  }
+
+  if (
+    /^(?:import|from|def|class|for|while|if|elif|else|try|except|finally|with|return|pass|break|continue|raise|assert|global|nonlocal|del|lambda|@)\b/.test(
+      lastLine,
+    )
+  ) {
+    return false
+  }
+
+  if (/^[A-Za-z_][\w\s,]*=/.test(lastLine)) {
+    return false
+  }
+
+  return true
+}
 
 function CodeBlock({ code, language = 'python', title = 'Пример кода', runnable }) {
   const [isCopied, setIsCopied] = useState(false)
@@ -11,12 +56,14 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
   const [isResettingSession, setIsResettingSession] = useState(false)
   const [status, setStatus] = useState('')
   const [executionResult, setExecutionResult] = useState(null)
+  const hasAutoRunStartedRef = useRef(false)
   const blockId = useId()
   const { getBlockMeta, isSessionBusy, registerBlock, resetSession, runBlock, sessionVersion, unregisterBlock } =
     usePythonExecution()
 
   const isPython = language.toLowerCase() === 'python'
-  const canRun = runnable ?? isPython
+  const hasVisibleOutput = isPython && hasLikelyVisibleOutput(code)
+  const canRun = runnable ?? hasVisibleOutput
   const hasExecutionResult = executionResult !== null
   const blockMeta = canRun
     ? getBlockMeta(blockId)
@@ -67,7 +114,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     setTimeout(() => setIsCopied(false), 1200)
   }
 
-  const handleRun = async () => {
+  const handleRun = useCallback(async () => {
     setIsRunning(true)
     setExecutionResult(null)
 
@@ -94,7 +141,29 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     } finally {
       setIsRunning(false)
     }
-  }
+  }, [blockId, code, runBlock])
+
+  useEffect(() => {
+    if (!canRun || !hasVisibleOutput || hasAutoRunStartedRef.current) {
+      return
+    }
+
+    if (!blockMeta.canRun || blockMeta.isExecuted || isRunning || isSessionBusy || isResettingSession) {
+      return
+    }
+
+    hasAutoRunStartedRef.current = true
+    void handleRun()
+  }, [
+    blockMeta.canRun,
+    blockMeta.isExecuted,
+    canRun,
+    handleRun,
+    hasVisibleOutput,
+    isResettingSession,
+    isRunning,
+    isSessionBusy,
+  ])
 
   const handleReset = () => {
     setExecutionResult(null)
@@ -248,16 +317,6 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
             </div>
           ) : null}
 
-          {executionResult &&
-          !executionResult.stdout &&
-          !executionResult.value &&
-          !executionResult.stderr &&
-          !executionResult.error &&
-          !executionResult.plots.length ? (
-            <div className="rounded-2xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-slate-300">
-              Код выполнился: текстового вывода нет, но могли быть созданы переменные, функции или графики.
-            </div>
-          ) : null}
         </div>
       ) : null}
     </section>
