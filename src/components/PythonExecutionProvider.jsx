@@ -50,6 +50,7 @@ export function PythonExecutionProvider({ screenKey, children }) {
   const [executedBlockIds, setExecutedBlockIds] = useState([])
   const [currentRunningId, setCurrentRunningId] = useState(null)
   const [sessionVersion, setSessionVersion] = useState(0)
+  const hasInitializedScreenRef = useRef(false)
 
   const blocksRef = useRef(blocks)
   const executedBlockIdsRef = useRef(executedBlockIds)
@@ -60,6 +61,11 @@ export function PythonExecutionProvider({ screenKey, children }) {
   syncRef(currentRunningIdRef, currentRunningId)
 
   useEffect(() => {
+    if (!hasInitializedScreenRef.current) {
+      hasInitializedScreenRef.current = true
+      return
+    }
+
     setBlocks([])
     setExecutedBlockIds([])
     setCurrentRunningId(null)

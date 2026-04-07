@@ -205,7 +205,14 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
       return
     }
 
-    if (blockMeta.isExecuted || isRunning || isSessionBusy || isResettingSession) {
+    if (
+      !blockMeta.isRegistered ||
+      !blockMeta.canRun ||
+      blockMeta.isExecuted ||
+      isRunning ||
+      isSessionBusy ||
+      isResettingSession
+    ) {
       console.info(`${logPrefix} auto-run skipped`, {
         canRun,
         hasVisibleOutput,
