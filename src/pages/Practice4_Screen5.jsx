@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
-import AlertBox from '../components/AlertBox'
 import CourseHeader from '../components/CourseHeader'
 import DatasetCard from '../components/DatasetCard'
-import MathBlock from '../components/MathBlock'
 import ScreenNavigation from '../components/ScreenNavigation'
 import TaskBlock from '../components/TaskBlock'
 
@@ -96,26 +94,6 @@ function Practice4_Screen5({ setContextNotes }) {
         />
 
         <TaskBlock title="Что нужно сделать в Лаб 3.1:" items={taskItems} />
-
-        <section className="grid gap-4 lg:grid-cols-2">
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-white">Основная гипотеза</h3>
-            <MathBlock formula={String.raw`H_0:\ \mu_1 = \mu_2 = \mu_3`} />
-          </article>
-
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-white">Сила эффекта</h3>
-            <MathBlock formula={String.raw`\eta^2 = \frac{SS_B}{SS_T}`} />
-          </article>
-        </section>
-
-        <AlertBox title="Что считается полноценным решением">
-          <p>
-            Полноценная работа по ANOVA содержит не только вычисления, но и статистический рассказ:
-            как были подготовлены данные, какие предположения проверялись, как интерпретирован
-            значимый или незначимый результат и почему итоговый вывод выглядит обоснованным.
-          </p>
-        </AlertBox>
       </section>
 
       <ScreenNavigation

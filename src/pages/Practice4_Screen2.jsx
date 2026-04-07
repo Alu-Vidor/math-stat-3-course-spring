@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import AlertBox from '../components/AlertBox'
+import AnovaGroupScatterChart from '../components/AnovaGroupScatterChart'
 import ComparisonTable from '../components/ComparisonTable'
 import CourseHeader from '../components/CourseHeader'
 import IdeaCard from '../components/IdeaCard'
@@ -111,6 +112,8 @@ function Practice4_Screen2({ setContextNotes }) {
           />
         </div>
       </section>
+
+      <AnovaGroupScatterChart />
 
       <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
         <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">

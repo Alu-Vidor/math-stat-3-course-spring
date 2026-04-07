@@ -1,9 +1,6 @@
 import { useEffect } from 'react'
-import AlertBox from '../components/AlertBox'
 import CourseHeader from '../components/CourseHeader'
 import DatasetCard from '../components/DatasetCard'
-import KeyIdea from '../components/KeyIdea'
-import MathBlock from '../components/MathBlock'
 import ScreenNavigation from '../components/ScreenNavigation'
 import TaskBlock from '../components/TaskBlock'
 
@@ -94,36 +91,6 @@ function Practice4_Screen6({ setContextNotes }) {
         />
 
         <TaskBlock title="Что нужно сделать в Лаб 3.2:" items={taskItems} />
-
-        <section className="grid gap-4 lg:grid-cols-2">
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              Двухфакторная модель
-            </h3>
-            <MathBlock formula={String.raw`Y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \varepsilon_{ijk}`} />
-          </article>
-
-          <article className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              На что смотреть в первую очередь
-            </h3>
-            <MathBlock formula={String.raw`H_0^{(\alpha\beta)}:\ (\alpha\beta)_{ij} = 0\ \text{для всех}\ i,j`} />
-          </article>
-        </section>
-
-        <AlertBox title="Как писать вывод при наличии взаимодействия">
-          <p>
-            Если взаимодействие факторов статистически значимо, не следует ограничиваться фразой
-            о значимости каждого фактора по отдельности. Корректный вывод должен объяснять, как
-            именно меняется эффект одного фактора при фиксированных уровнях другого.
-          </p>
-        </AlertBox>
-
-        <KeyIdea title="Что отличает сильную лабораторную работу">
-          Сильная работа по двухфакторной ANOVA показывает не только владение синтаксисом Python,
-          но и зрелое статистическое мышление: автор различает главные эффекты и взаимодействие,
-          понимает границы интерпретации и переводит таблицу ANOVA в ясный академический текст.
-        </KeyIdea>
       </section>
 
       <ScreenNavigation

@@ -4,6 +4,7 @@ import CodeBlock from '../components/CodeBlock'
 import ComparisonTable from '../components/ComparisonTable'
 import CourseHeader from '../components/CourseHeader'
 import DatasetCard from '../components/DatasetCard'
+import InteractionProfileChart from '../components/InteractionProfileChart'
 import KeyIdea from '../components/KeyIdea'
 import MathBlock from '../components/MathBlock'
 import MathText from '../components/MathText'
@@ -154,6 +155,8 @@ function Practice4_Screen4({ setContextNotes }) {
             runnable={false}
           />
         </section>
+
+        <InteractionProfileChart />
 
         <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
