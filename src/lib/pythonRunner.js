@@ -94,6 +94,15 @@ let pyodidePromise = null
 let seabornPromise = null
 let executionQueue = Promise.resolve()
 
+function withTimeout(promise, timeoutMs, errorMessage = 'Превышено время ожидания') {
+  let timeoutId
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+  })
+
+  return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timeoutId))
+}
+
 function normalizeOutput(chunks) {
   return chunks.join('').replace(/\s+$/, '')
 }
@@ -138,7 +147,7 @@ async function loadPyodideRuntime(onStatus) {
     })
   }
 
-  return pyodidePromise
+  return withTimeout(pyodidePromise, 60000, 'Загрузка Python runtime заняла слишком много времени (60с). Попробуйте обновить страницу.')
 }
 
 async function ensureSeaborn(pyodide, onStatus) {
@@ -152,6 +161,12 @@ import micropip
 await micropip.install("seaborn")
 `)
     })()
+
+    seabornPromise = withTimeout(
+      seabornPromise,
+      90000,
+      'Установка Seaborn и зависимостей заняла слишком много времени. Проверьте интернет-соединение.',
+    )
 
     seabornPromise.catch(() => {
       seabornPromise = null
@@ -264,9 +279,21 @@ function schedulePythonTask(task) {
 }
 
 export function runPythonCode(code, { onStatus = () => {}, sessionKey = 'default' } = {}) {
-  return schedulePythonTask(() => executePythonInSession(code, sessionKey, onStatus))
+  return schedulePythonTask(() =>
+    withTimeout(
+      executePythonInSession(code, sessionKey, onStatus),
+      45000,
+      'Выполнение кода прервано по таймауту (45с). Убедитесь, что нет бесконечных циклов.',
+    ),
+  )
 }
 
 export function resetPythonSession(sessionKey, { onStatus = () => {} } = {}) {
-  return schedulePythonTask(() => clearPythonSession(sessionKey, onStatus))
+  return schedulePythonTask(() =>
+    withTimeout(
+      clearPythonSession(sessionKey, onStatus),
+      30000,
+      'Сброс сессии прерван по таймауту (30с).',
+    ),
+  )
 }
