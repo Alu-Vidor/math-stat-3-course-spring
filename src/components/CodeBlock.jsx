@@ -157,7 +157,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       const shouldRetryAutoRun =
-        /Блок ещё не готов к запуску|Блок пока недоступен для запуска|Сначала выполните шаг|Дождитесь завершения текущего блока/.test(
+        /не готов к запуску|пока недоступен для запуска|Сначала выполните шаг|Дождитесь завершения текущего блока/.test(
           message,
         )
 
@@ -190,7 +190,14 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
       return
     }
 
-    if (blockMeta.isExecuted || isRunning || isSessionBusy || isResettingSession) {
+    if (
+      !blockMeta.isRegistered ||
+      !blockMeta.canRun ||
+      blockMeta.isExecuted ||
+      isRunning ||
+      isSessionBusy ||
+      isResettingSession
+    ) {
       console.info(`${logPrefix} auto-run skipped`, {
         canRun,
         hasVisibleOutput,
@@ -210,8 +217,8 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     console.info(`${logPrefix} auto-run trigger`)
     void handleRun({ isAutoRun: true })
   }, [
-    blockMeta.canRun,
     blockMeta.blockedByOrder,
+    blockMeta.canRun,
     blockMeta.isExecuted,
     blockMeta.isRegistered,
     blockMeta.order,
