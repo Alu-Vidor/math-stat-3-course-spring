@@ -106,6 +106,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
   useEffect(() => {
     setExecutionResult(null)
     setStatus('')
+    hasAutoRunStartedRef.current = false
   }, [sessionVersion])
 
   const handleCopy = async () => {
@@ -114,7 +115,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     setTimeout(() => setIsCopied(false), 1200)
   }
 
-  const handleRun = useCallback(async () => {
+  const handleRun = useCallback(async ({ isAutoRun = false } = {}) => {
     setIsRunning(true)
     setExecutionResult(null)
 
@@ -127,8 +128,13 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
 
       setExecutionResult(result)
       setStatus(result.error ? 'Выполнение завершилось с ошибкой' : 'Выполнение завершено')
+      return !result.error
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
+      const shouldRetryAutoRun =
+        /Блок ещё не готов к запуску|Блок пока недоступен для запуска|Сначала выполните шаг|Дождитесь завершения текущего блока/.test(
+          message,
+        )
 
       setExecutionResult({
         stdout: '',
@@ -138,6 +144,12 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
         error: message,
       })
       setStatus('Выполнение завершилось с ошибкой')
+
+      if (isAutoRun && shouldRetryAutoRun) {
+        hasAutoRunStartedRef.current = false
+      }
+
+      return false
     } finally {
       setIsRunning(false)
     }
@@ -153,7 +165,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     }
 
     hasAutoRunStartedRef.current = true
-    void handleRun()
+    void handleRun({ isAutoRun: true })
   }, [
     blockMeta.canRun,
     blockMeta.isExecuted,
@@ -219,9 +231,11 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
           {canRun ? (
             <button
               type="button"
-              onClick={handleRun}
+              onClick={() => {
+                void handleRun()
+              }}
               disabled={isRunning || isResettingSession || isSessionBusy || !blockMeta.canRun}
-              className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-emerald-500 disabled:cursor-wait disabled:bg-emerald-700"
+              className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-emerald-700"
             >
               {isRunning ? <LoaderCircle size={14} className="animate-spin" /> : <Play size={14} />}
               {isRunning ? 'Запуск...' : 'Запустить'}
