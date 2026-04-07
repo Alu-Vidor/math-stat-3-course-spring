@@ -9,6 +9,10 @@ pyodide_http.patch_all()
 try:
     import matplotlib
     matplotlib.use("AGG")
+    import matplotlib.pyplot as plt
+    def show_patch(*args, **kwargs):
+        pass
+    plt.show = show_patch
 except Exception:
     pass
 `
@@ -40,30 +44,35 @@ try:
     except Exception:
         pass
 
-    tree = ast.parse(__course_code__, mode="exec")
-
-    if tree.body and isinstance(tree.body[-1], ast.Expr):
-        last_expression = ast.Expression(tree.body.pop().value)
-        exec(compile(tree, "<code-block>", "exec"), namespace)
-        value = eval(compile(last_expression, "<code-block>", "eval"), namespace)
-        if value is not None:
-            result["value"] = repr(value)
+    code_to_run = __course_code__.strip()
+    if not code_to_run:
+        result["value"] = ""
     else:
-        exec(compile(tree, "<code-block>", "exec"), namespace)
+        tree = ast.parse(code_to_run, mode="exec")
+
+        if tree.body and isinstance(tree.body[-1], ast.Expr):
+            last_expression = ast.Expression(tree.body.pop().value)
+            if tree.body:
+                exec(compile(tree, "<code-block>", "exec"), namespace)
+            value = eval(compile(last_expression, "<code-block>", "eval"), namespace)
+            if value is not None:
+                result["value"] = repr(value)
+        else:
+            exec(compile(tree, "<code-block>", "exec"), namespace)
 except Exception:
     result["error"] = traceback.format_exc()
 finally:
     try:
         import matplotlib.pyplot as plt
-
-        for figure_number in plt.get_fignums():
-            figure = plt.figure(figure_number)
-            buffer = io.BytesIO()
-            figure.savefig(buffer, format="png", bbox_inches="tight", dpi=140)
-            result["plots"].append(base64.b64encode(buffer.getvalue()).decode("ascii"))
-            buffer.close()
-
-        plt.close("all")
+        fignums = plt.get_fignums()
+        if fignums:
+            for figure_number in fignums:
+                figure = plt.figure(figure_number)
+                buffer = io.BytesIO()
+                figure.savefig(buffer, format="png", bbox_inches="tight", dpi=140)
+                result["plots"].append(base64.b64encode(buffer.getvalue()).decode("ascii"))
+                buffer.close()
+            plt.close("all")
     except Exception:
         pass
 
@@ -153,10 +162,26 @@ await micropip.install("seaborn")
 }
 
 async function preparePackages(pyodide, code, onStatus) {
+  const needsNumpy = /\bimport\s+numpy\b|\bfrom\s+numpy\b|np\./.test(code)
+  const needsPandas = /\bimport\s+pandas\b|\bfrom\s+pandas\b|pd\./.test(code)
+  const needsMatplotlib = /\bimport\s+matplotlib\b|\bfrom\s+matplotlib\b|plt\./.test(code) || /\bimport\s+seaborn\b|\bfrom\s+seaborn\b|sns\./.test(code)
+  const needsScipy = /\bimport\s+scipy\b|\bfrom\s+scipy\b|\bstats\./.test(code)
+
+  if (needsNumpy || needsPandas || needsMatplotlib || needsScipy) {
+    onStatus('Подготавливаем библиотеки...')
+    const packagesToLoad = []
+    if (needsNumpy) packagesToLoad.push('numpy')
+    if (needsPandas) packagesToLoad.push('pandas')
+    if (needsMatplotlib) packagesToLoad.push('matplotlib')
+    if (needsScipy) packagesToLoad.push('scipy')
+
+    await pyodide.loadPackage(packagesToLoad)
+  }
+
   const importsForBuiltins = stripPyPiImports(code)
 
   if (importsForBuiltins.trim() && typeof pyodide.loadPackagesFromImports === 'function') {
-    onStatus('Загружаем библиотеки...')
+    onStatus('Загружаем дополнительные модули...')
     await pyodide.loadPackagesFromImports(importsForBuiltins)
   }
 
