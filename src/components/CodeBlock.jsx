@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
-import { Check, Copy, LoaderCircle, Play, RotateCcw } from 'lucide-react'
+import { Check, Copy, RotateCcw } from 'lucide-react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import TerminalOutput from './TerminalOutput'
@@ -190,11 +190,14 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
       return
     }
 
-    if (!blockMeta.canRun || blockMeta.isExecuted || isRunning || isSessionBusy || isResettingSession) {
+    if (blockMeta.isExecuted || isRunning || isSessionBusy || isResettingSession) {
       console.info(`${logPrefix} auto-run skipped`, {
         canRun,
         hasVisibleOutput,
         blockCanRun: blockMeta.canRun,
+        isRegistered: blockMeta.isRegistered,
+        order: blockMeta.order,
+        blockedByOrder: blockMeta.blockedByOrder,
         isExecuted: blockMeta.isExecuted,
         isRunning,
         isSessionBusy,
@@ -208,7 +211,10 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     void handleRun({ isAutoRun: true })
   }, [
     blockMeta.canRun,
+    blockMeta.blockedByOrder,
     blockMeta.isExecuted,
+    blockMeta.isRegistered,
+    blockMeta.order,
     canRun,
     handleRun,
     hasVisibleOutput,
@@ -269,20 +275,6 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
             </button>
           ) : null}
 
-          {canRun ? (
-            <button
-              type="button"
-              onClick={() => {
-                void handleRun()
-              }}
-              disabled={isRunning || isResettingSession || isSessionBusy || !blockMeta.canRun}
-              className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-emerald-700"
-            >
-              {isRunning ? <LoaderCircle size={14} className="animate-spin" /> : <Play size={14} />}
-              {isRunning ? 'Запуск...' : 'Запустить'}
-            </button>
-          ) : null}
-
           {hasExecutionResult || status ? (
             <button
               type="button"
@@ -308,6 +300,10 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
         <SyntaxHighlighter
           language={language}
           style={vscDarkPlus}
+          codeTagProps={{
+            contentEditable: false,
+            spellCheck: false,
+          }}
           customStyle={{
             margin: 0,
             padding: '1rem',
