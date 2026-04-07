@@ -2,6 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { resetPythonSession, runPythonCode } from '../lib/pythonRunner'
 import { PythonExecutionContext } from './usePythonExecution'
 
+function createRunError(code, message) {
+  const error = new Error(message)
+  error.name = 'PythonRunError'
+  error.code = code
+  return error
+}
+
 function buildBlockMeta(blocks, executedBlockIds, currentRunningId, blockId) {
   const runnableBlocks = blocks.filter((block) => block.runnable)
   const orderIndex = runnableBlocks.findIndex((block) => block.id === blockId)
@@ -95,19 +102,19 @@ export function PythonExecutionProvider({ screenKey, children }) {
     )
 
     if (!meta.isRegistered) {
-      throw new Error('Блок еще не готов к запуску')
+      throw createRunError('BLOCK_NOT_REGISTERED', 'Block is not ready yet')
     }
 
     if (currentRunningIdRef.current !== null && currentRunningIdRef.current !== blockId) {
-      throw new Error('Дождитесь завершения текущего блока')
+      throw createRunError('SESSION_BUSY', 'Wait until current block finishes')
     }
 
     if (!meta.canRun && !meta.isRunning) {
       if (meta.blockedByOrder) {
-        throw new Error(`Сначала выполните шаг ${meta.blockedByOrder}`)
+        throw createRunError('BLOCKED_BY_ORDER', `Run step ${meta.blockedByOrder} first`)
       }
 
-      throw new Error('Блок пока недоступен для запуска')
+      throw createRunError('BLOCK_NOT_AVAILABLE', 'Block is temporarily unavailable')
     }
 
     setCurrentRunningId(blockId)

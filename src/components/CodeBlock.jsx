@@ -57,6 +57,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
   const [status, setStatus] = useState('')
   const [executionResult, setExecutionResult] = useState(null)
   const hasAutoRunStartedRef = useRef(false)
+  const autoRunRetryCountRef = useRef(0)
   const blockId = useId()
   const { getBlockMeta, isSessionBusy, registerBlock, resetSession, runBlock, sessionVersion, unregisterBlock } =
     usePythonExecution()
@@ -120,6 +121,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
     setExecutionResult(null)
     setStatus('')
     hasAutoRunStartedRef.current = false
+    autoRunRetryCountRef.current = 0
   }, [sessionVersion])
 
   const handleCopy = async () => {
@@ -153,13 +155,29 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
         hasStderr: Boolean(result.stderr),
         plots: result.plots?.length ?? 0,
       })
+      if (isAutoRun) {
+        autoRunRetryCountRef.current = 0
+      }
       return !result.error
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
+      const errorCode =
+        typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : null
       const shouldRetryAutoRun =
-        /не готов к запуску|пока недоступен для запуска|Сначала выполните шаг|Дождитесь завершения текущего блока/.test(
-          message,
-        )
+        errorCode === 'BLOCK_NOT_REGISTERED' ||
+        errorCode === 'BLOCK_NOT_AVAILABLE' ||
+        errorCode === 'BLOCKED_BY_ORDER' ||
+        errorCode === 'SESSION_BUSY'
+
+      if (isAutoRun && shouldRetryAutoRun && autoRunRetryCountRef.current < 30) {
+        autoRunRetryCountRef.current += 1
+        hasAutoRunStartedRef.current = false
+        console.info(`${logPrefix} auto-run retry scheduled`, {
+          attempt: autoRunRetryCountRef.current,
+          errorCode,
+        })
+        return false
+      }
 
       setExecutionResult({
         stdout: '',
@@ -170,13 +188,10 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
       })
       setStatus('Выполнение завершилось с ошибкой')
 
-      if (isAutoRun && shouldRetryAutoRun) {
-        hasAutoRunStartedRef.current = false
-      }
-
       console.error(`${logPrefix} run failed`, {
         mode: isAutoRun ? 'auto' : 'manual',
         shouldRetryAutoRun,
+        errorCode,
         message,
       })
       return false
@@ -190,14 +205,7 @@ function CodeBlock({ code, language = 'python', title = 'Пример кода',
       return
     }
 
-    if (
-      !blockMeta.isRegistered ||
-      !blockMeta.canRun ||
-      blockMeta.isExecuted ||
-      isRunning ||
-      isSessionBusy ||
-      isResettingSession
-    ) {
+    if (blockMeta.isExecuted || isRunning || isSessionBusy || isResettingSession) {
       console.info(`${logPrefix} auto-run skipped`, {
         canRun,
         hasVisibleOutput,

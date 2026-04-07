@@ -205,7 +205,7 @@ function Practice2_Screen6({ setContextNotes }) {
           title="Observed vs Expected по каждой грани"
           caption="Синие столбцы показывают ожидаемые частоты, янтарные — наблюдаемые. Чем сильнее расходятся пары столбцов, тем больше вклад соответствующей категории в статистику χ²."
         >
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
             <BarChart data={observedExpectedRows} margin={{ top: 12, right: 16, left: 0, bottom: 4 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
               <XAxis dataKey="face" tickLine={false} axisLine={false} />
@@ -253,7 +253,7 @@ function Practice2_Screen6({ setContextNotes }) {
           title="Где находится наше значение χ²"
           caption="Для df = 5 правый хвост соответствует редким большим отклонениям. Наша статистика χ² = 5.4 лежит левее критической границы около 11.07, поэтому оснований отвергать H₀ нет."
         >
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
             <ComposedChart data={chiSquareCurveData} margin={{ top: 16, right: 24, left: 0, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
               <XAxis dataKey="x" type="number" tickLine={false} axisLine={false} domain={[0, 16]} />
@@ -311,7 +311,7 @@ function Practice2_Screen6({ setContextNotes }) {
           title="Какие грани сильнее всего тянут статистику вверх"
           caption="Самый большой вклад дают те категории, где разрыв между наблюдаемой и ожидаемой частотой максимален. В этом примере главные источники статистики — грани 1 и 5."
         >
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
             <BarChart data={contributionRows} margin={{ top: 12, right: 16, left: 0, bottom: 4 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
               <XAxis dataKey="face" tickLine={false} axisLine={false} />

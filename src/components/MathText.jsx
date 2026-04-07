@@ -8,12 +8,14 @@ function InlineMath({ formula, block = false }) {
     rendered = katex.renderToString(formula, {
       throwOnError: true,
       displayMode: block,
+      strict: 'ignore',
     })
   } catch (error) {
     console.error(`KaTeX render failed for formula: ${formula}`, error)
     rendered = katex.renderToString(formula, {
       throwOnError: false,
       displayMode: block,
+      strict: 'ignore',
     })
   }
 

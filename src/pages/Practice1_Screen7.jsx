@@ -243,7 +243,7 @@ function Practice1_Screen7({ setContextNotes }) {
             title="Интервал вокруг выборочного среднего"
             caption="Синяя вертикальная линия показывает выборочное среднее x̄ = 175.7. Закрашенная зона показывает доверительный интервал для среднего при выбранном уровне доверия."
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <ComposedChart data={chartData} margin={{ top: 24, right: 24, left: 12, bottom: 12 }}>
                 <XAxis
                   type="number"

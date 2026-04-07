@@ -171,7 +171,7 @@ function Practice1_Screen6({ setContextNotes }) {
             title="Пример распределения зарплат"
             caption="Гистограмма отлично показывает форму распределения (например, нормальный «колокол»), но её вид сильно зависит от выбранного количества корзин (`bins`)."
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <BarChart data={histogramData} margin={{ top: 12, right: 12, left: 0, bottom: 12 }}>
                 <CartesianGrid strokeDasharray="4 4" stroke="#cbd5e1" vertical={false} />
                 <XAxis
@@ -224,7 +224,7 @@ function Practice1_Screen6({ setContextNotes }) {
             title="Накопительная доля наблюдений"
             caption="ECDF растет ступеньками от 0 до 1. По оси Y мы сразу видим процентили (например, какое значение отсекает 50% данных — это и есть наша медиана!)."
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <LineChart data={ecdfData} margin={{ top: 12, right: 18, left: 0, bottom: 12 }}>
                 <CartesianGrid strokeDasharray="4 4" stroke="#64748b" strokeOpacity={0.35} vertical={false} />
                 <XAxis
