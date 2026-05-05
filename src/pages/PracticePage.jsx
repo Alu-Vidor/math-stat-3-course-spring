@@ -38,6 +38,17 @@ import Practice4_Screen3 from './Practice4_Screen3'
 import Practice4_Screen4 from './Practice4_Screen4'
 import Practice4_Screen5 from './Practice4_Screen5'
 import Practice4_Screen6 from './Practice4_Screen6'
+import {
+  Practice5_Screen1,
+  Practice5_Screen2,
+  Practice5_Screen3,
+  Practice5_Screen4,
+  Practice5_Screen5,
+  Practice5_Screen6,
+  Practice5_Screen7,
+  Practice5_Screen8,
+  Practice5_Screen9,
+} from './Practice5_Screens'
 
 const practiceScreens = {
   1: {
@@ -82,6 +93,17 @@ const practiceScreens = {
     4: Practice4_Screen4,
     5: Practice4_Screen5,
     6: Practice4_Screen6,
+  },
+  5: {
+    1: Practice5_Screen1,
+    2: Practice5_Screen2,
+    3: Practice5_Screen3,
+    4: Practice5_Screen4,
+    5: Practice5_Screen5,
+    6: Practice5_Screen6,
+    7: Practice5_Screen7,
+    8: Practice5_Screen8,
+    9: Practice5_Screen9,
   },
 }
 
@@ -257,7 +279,7 @@ function PracticePage({ practiceNumber, screenNumber, setContext, setContextNote
     return <Practice1 setContext={setContext} />
   }
 
-  if (practiceNumber >= 5 && practiceNumber <= 6) {
+  if (practiceNumber === 6) {
     return (
       <ComingSoonPracticeScreen
         practiceNumber={practiceNumber}
